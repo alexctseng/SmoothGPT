@@ -53,7 +53,7 @@
   let csvOutput = '';
 
   let chatContainer: HTMLElement;
-  let attachmentDropdownVisible = false;
+  let moreButtonsToggle: boolean = false;
   let conversationTitle = "";
   let uploadType: 'pdf' | 'csv' = 'pdf';
 
@@ -245,15 +245,18 @@ function startEditMessage(i: number) {
            /rsct=image\/(jpeg|jpg|gif|png|bmp)/i.test(url);
   }
 
-  function toggleAttachmentDropdown() {
-    attachmentDropdownVisible = !attachmentDropdownVisible;
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      moreButtonsToggle = !moreButtonsToggle;
+    }
   }
 
-  function handleFileUpload(type: 'pdf' | 'csv') {
-    uploadType = type;
-    const inputElement = type === 'pdf' ? pdfInputElement : csvInputElement;
-    inputElement.click();
-    attachmentDropdownVisible = false;
+  function handleFileTypeKeyDown(event: KeyboardEvent, type: 'pdf' | 'csv') {
+    if (event.key === 'Enter' || event.key === ' ') {
+      uploadType = type;
+      const inputElement = type === 'pdf' ? pdfInputElement : csvInputElement;
+      inputElement.click();
+    }
   }
 
 </script>
@@ -404,62 +407,89 @@ SmoothGPT
 
     <div class="inputbox-container w-full flex justify-center items-center bg-primary">
       <div class="inputbox flex flex-1 bg-primary mt-auto mx-auto max-w-3xl mb-3">
-        <div class="flex items-stretch w-full">
-          <div class="relative flex items-stretch">
-            <button 
-              on:click={toggleAttachmentDropdown}
-              class="p-2 hover:bg-primary border-2 border-r-0 border-gray-500 rounded-l-lg flex items-center"
-              aria-label="Toggle file upload options"
-            >
-              <img src={UploadIcon} alt="Upload" class="w-6 h-6" />
-            </button>
-            {#if attachmentDropdownVisible}
-              <div class="absolute left-0 top-full mt-1 flex bg-dark-secondary rounded-lg overflow-hidden shadow-lg z-10">
-                <button
-                  on:click={() => handleFileUpload('pdf')}
-                  class="flex items-center px-4 py-2 hover:bg-primary whitespace-nowrap"
-                >
-                  <img src={PDFIcon} alt="PDF" class="w-6 h-6 mr-2" />
-                  PDF
-                </button>
-                <button
-                  on:click={() => handleFileUpload('csv')}
-                  class="flex items-center px-4 py-2 hover:bg-primary whitespace-nowrap"
-                >
-                  <img src={CSVIcon} alt="CSV" class="w-6 h-6 mr-2" />
-                  CSV
-                </button>
-              </div>
-            {/if}
+        {#if isVisionMode}  
+          <input type="file" id="imageUpload" multiple accept="image/*" on:change="{handleImageUpload}" bind:this={fileInputElement} class="file-input">  
+          <label for="imageUpload" class="file-label bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">  
+            {#if uploadedFileCount > 0}  
+              <span class="fileCount">{uploadedFileCount}</span>  
+            {:else}  
+              <img src={UploadIcon} alt="Upload" class="upload-icon icon-white">  
+            {/if} 
+          </label>  
+
+          {#if uploadedFileCount > 0}  
+            <button on:click={clearFiles} class="clear-btn">X</button>  
+          {/if}  
+        {:else if isGPTMode}
+          <div class="flex items-center bg-secondary rounded-lg p-2">
+            <div class="relative">
+              <button 
+                on:click={() => moreButtonsToggle = !moreButtonsToggle} 
+                on:keydown={handleKeyDown}
+                class="p-2 rounded-lg hover:bg-primary"
+                aria-label="Toggle file upload options"
+              >
+                <img src={UploadIcon} alt="Upload" class="w-6 h-6" />
+              </button>
+              {#if moreButtonsToggle}
+                <div class="absolute right-full mr-2 bg-dark-secondary rounded-lg overflow-hidden shadow-lg flex">
+                  <button
+                    on:click={() => { uploadType = 'pdf'; pdfInputElement.click(); }}
+                    on:keydown={(e) => handleFileTypeKeyDown(e, 'pdf')}
+                    class="cursor-pointer p-2 hover:bg-primary flex items-center"
+                    aria-label="Upload PDF"
+                  >
+                    <img src={PDFIcon} alt="PDF" class="w-6 h-6 mr-2" />
+                    PDF
+                  </button>
+                  <button
+                    on:click={() => { uploadType = 'csv'; csvInputElement.click(); }}
+                    on:keydown={(e) => handleFileTypeKeyDown(e, 'csv')}
+                    class="cursor-pointer p-2 hover:bg-primary flex items-center"
+                    aria-label="Upload CSV/XLSX"
+                  >
+                    <img src={CSVIcon} alt="CSV" class="w-6 h-6 mr-2" />
+                    CSV/XLSX
+                  </button>
+                </div>
+              {/if}
+            </div>
+            <input type="file" id="pdfUpload" accept="application/pdf" on:change={uploadPDF} class="hidden" bind:this={pdfInputElement}>
+            <input type="file" id="csvUpload" accept=".csv,.xlsx,.xls" on:change={uploadCSV} class="hidden" bind:this={csvInputElement}>
+            {#if uploadedPDFCount > 0}  
+              <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>  
+            {/if}  
+            {#if uploadedCSVCount > 0}  
+              <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>  
+            {/if}  
           </div>
-          <input type="file" id="pdfUpload" accept="application/pdf" on:change={uploadPDF} class="hidden" bind:this={pdfInputElement}>
-          <input type="file" id="csvUpload" accept=".csv,.xlsx,.xls" on:change={uploadCSV} class="hidden" bind:this={csvInputElement}>
-          
-          <textarea bind:this={textAreaElement}  
-            class="flex-grow min-h-[48px] max-h-[200px] p-2 border-2 border-r-0 border-l-0 border-gray-500 bg-primary resize-none focus:outline-none"   
-            placeholder="Type your message..."   
-            bind:value={input}   
-            on:input={autoExpand}
-            style="overflow-y: auto;"
-            on:keydown={(event) => {  
-              const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
-              if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
-                event.preventDefault();
-                processMessage();  
-              }  
-            }}  
-          ></textarea>  
-          <button class="bg-chat rounded-r-lg px-4 border-2 border-l-0 border-gray-500 cursor-pointer flex items-center justify-center"
-            on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }}
-            disabled={!$isStreaming && !input.trim().length}
-          >    
-            {#if $isStreaming}    
-              <img class="icon-white w-6 h-6" alt="Wait" src={WaitIcon} />    
-            {:else}    
-              <img class="icon-white w-6 h-6" alt="Send" src={SendIcon} />    
-            {/if}    
-          </button>  
-        </div>
+        {/if}
+
+        <textarea bind:this={textAreaElement}  
+          class="w-full min-h-[96px] h-24 rounded-lg p-2 mx-1 mr-0 border-t-2 border-b-2 border-l-2 rounded-r-none bg-primary border-gray-500 resize-none focus:outline-none"   
+          placeholder="Type your message..."   
+          bind:value={input}   
+          on:input={autoExpand}
+          style="height: 96px; overflow-y: auto; overflow:visible !important;"
+          on:keydown={(event) => {  
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
+            if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
+              event.preventDefault(); // Prevent default insert line break behavior  
+              processMessage();  
+            }  
+            else if (!$isStreaming && event.key === "Enter" && isMobile) {  
+              // Allow default behavior on mobile, which is to insert a new line  
+              // Optionally, you can explicitly handle mobile enter key behavior here if needed  
+            }  
+          }}  
+        ></textarea>  
+        <button class="bg-chat rounded-lg py-2 px-4 mx-1 ml-0 border-t-2 border-b-2 border-r-2  border-gray-500 rounded-l-none cursor-pointer " on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} disabled={!$isStreaming && !input.trim().length}>    
+          {#if $isStreaming}    
+            <img class="icon-white min-w-[24px] w-[24px]" alt="Wait" src={WaitIcon} />    
+          {:else}    
+            <img class="icon-white min-w-[24px] w-[24px]" alt="Send" src={SendIcon} />    
+          {/if}    
+        </button>  
       </div>
     </div>
 
@@ -479,31 +509,4 @@ SmoothGPT
 
 <style>
   @import './styles/styles.css';
-
-  .inputbox-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 1rem;
-  }
-
-  .inputbox {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    max-width: 48rem;
-  }
-
-  textarea {
-    line-height: 1.5;
-    width: 100%;
-  }
-
-  button {
-    transition: background-color 0.3s ease;
-  }
-
-  button:hover {
-    background-color: #4a5568;
-  }
 </style>
