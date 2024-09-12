@@ -406,8 +406,15 @@ SmoothGPT
       <div class="inputbox flex flex-1 bg-primary mt-auto mx-auto max-w-3xl mb-3">
         <div class="flex items-stretch w-full">
           <div class="relative flex items-stretch">
+            <button 
+              on:click={toggleAttachmentDropdown}
+              class="p-2 hover:bg-primary border-2 border-r-0 border-gray-500 rounded-l-lg flex items-center"
+              aria-label="Toggle file upload options"
+            >
+              <img src={UploadIcon} alt="Upload" class="w-6 h-6" />
+            </button>
             {#if attachmentDropdownVisible}
-              <div class="absolute right-full top-0 flex bg-dark-secondary rounded-lg overflow-hidden shadow-lg z-10 mr-2">
+              <div class="absolute left-0 top-full mt-1 flex bg-dark-secondary rounded-lg overflow-hidden shadow-lg z-10">
                 <button
                   on:click={() => handleFileUpload('pdf')}
                   class="flex items-center px-4 py-2 hover:bg-primary whitespace-nowrap"
@@ -424,13 +431,6 @@ SmoothGPT
                 </button>
               </div>
             {/if}
-            <button 
-              on:click={toggleAttachmentDropdown}
-              class="p-2 hover:bg-primary border-2 border-r-0 border-gray-500 rounded-l-lg flex items-center"
-              aria-label="Toggle file upload options"
-            >
-              <img src={UploadIcon} alt="Upload" class="w-6 h-6" />
-            </button>
           </div>
           <input type="file" id="pdfUpload" accept="application/pdf" on:change={uploadPDF} class="hidden" bind:this={pdfInputElement}>
           <input type="file" id="csvUpload" accept=".csv,.xlsx,.xls" on:change={uploadCSV} class="hidden" bind:this={csvInputElement}>
