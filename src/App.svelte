@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';  
+  import { onMount, onDestroy, afterUpdate } from 'svelte';
+  import { get } from 'svelte/store';
   import { initApp, cleanupApp } from './appInit';
+  import { writable } from 'svelte/store';
+  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, clearPDFInputSignal, clearCSVInputSignal } from "./stores/stores";
+
+  const charCount = writable(0);
   import AudioPlayer from './lib/AudioPlayer.svelte';
   import Topbar from "./lib/Topbar.svelte";
   import Sidebar from "./lib/Sidebar.svelte";
@@ -25,10 +30,9 @@
   import WaitIcon from "./assets/wait.svg"; 
   import  UploadIcon from "./assets/upload-icon.svg";
   import  PDFIcon from "./assets/pdf-icon.svg";
-  import { afterUpdate } from "svelte";
+  import  CSVIcon from "./assets/csv-icon.svg";
   import { processPDF } from './managers/pdfManager';
-  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, clearPDFInputSignal } from "./stores/stores";
-  import { isAudioMessage, formatMessageForMarkdown } from "./utils/generalUtils";
+  import { processSpreadsheet } from './managers/spreadsheetManager';
   import { routeMessage, newChat, deleteMessageFromConversation } from "./managers/conversationManager";
   import { copyTextToClipboard } from './utils/generalUtils';
   import { selectedModel, selectedVoice, selectedMode, isStreaming } from './stores/stores';
@@ -39,28 +43,37 @@
 
   let fileInputElement; 
   let pdfInputElement; 
+  let csvInputElement;
   let input: string = "";
   let textAreaElement; 
   let editTextArea; 
 
   let pdfFile;
+  let csvFile;
   let pdfOutput = '';
+  let csvOutput = '';
 
   let chatContainer: HTMLElement;
   let moreButtonsToggle: boolean = false;
   let conversationTitle = "";
+  let uploadType: 'pdf' | 'csv' = 'pdf';
 
   let editingMessageId: number | null = null;
   let editingMessageContent: string = "";
 
   $: if ($clearFileInputSignal && fileInputElement) {
     fileInputElement.value = '';
-    clearFileInputSignal.set(false); // Reset the signal
+    clearFileInputSignal.set(false);
   }
 
   $: if ($clearPDFInputSignal && pdfInputElement) {
     pdfInputElement.value = '';
-    clearPDFInputSignal.set(false); // Reset the signal
+    clearPDFInputSignal.set(false);
+  }
+
+  $: if ($clearCSVInputSignal && csvInputElement) {
+    csvInputElement.value = '';
+    clearCSVInputSignal.set(false);
   }
 
   $: {
@@ -80,30 +93,39 @@
   }
 
   async function uploadPDF(event) {
-    pdfFile = event.target.files[0]; // Get the first file (assuming single file upload)
+    pdfFile = event.target.files[0];
     if (pdfFile) {
         pdfOutput = await processPDF(pdfFile);
         console.log(pdfOutput);
     }
-}
+  }
 
-function clearFiles() {  
-    base64Images.set([]); // Assuming this is a writable store tracking uploaded images  
-    pdfFile = null; // Clear the file variable  
-    pdfOutput = ''; // Reset the output  
+  async function uploadCSV(event) {
+    csvFile = event.target.files[0];
+    if (csvFile) {
+        csvOutput = await processSpreadsheet(csvFile);
+        console.log(csvOutput);
+    }
+  }
+
+  function clearFiles() {  
+    base64Images.set([]);
+    pdfFile = null;
+    csvFile = null;
+    pdfOutput = '';
+    csvOutput = '';
     pdfInputElement.value = '';
-
+    csvInputElement.value = '';
   }  
   
   let chatContainerObserver: MutationObserver | null = null;  
   
   function setupMutationObserver() {    
-    if (!chatContainer) return; // Ensure chatContainer is mounted  
+    if (!chatContainer) return;
   
     const config = { childList: true, subtree: true, characterData: true };  
   
     chatContainerObserver = new MutationObserver((mutationsList, observer) => {  
-      // Trigger scroll if any relevant mutations observed  
       scrollChatToEnd();  
     });  
   
@@ -113,23 +135,20 @@ function clearFiles() {
   onMount(async () => {  
     await initApp();  
   
-    // Setup MutationObserver after app initialization and component mounting  
     setupMutationObserver();  
   });  
   
   onDestroy(() => {  
-    // Clean up MutationObserver when component is destroyed to prevent memory leaks  
     if (chatContainerObserver) {  
       chatContainerObserver.disconnect();  
       chatContainerObserver = null;  
     }  
-    // Clean up app-specific resources  
     cleanupApp();  
   });  
 
   function scrollChatToEnd() {    
   if (chatContainer) {    
-    const threshold = 150; // How close to the bottom (in pixels) to trigger auto-scroll  
+    const threshold = 150;
     const isNearBottom = chatContainer.scrollHeight - chatContainer.scrollTop - threshold <= chatContainer.clientHeight;  
         
     if (isNearBottom) {    
@@ -138,25 +157,25 @@ function clearFiles() {
   }    
 }  
 
-const textMaxHeight = 300; // Maximum height in pixels
+const textMaxHeight = 300;
 
 function autoExpand(event) {
-    event.target.style.height = 'inherit'; // Reset the height
+    event.target.style.height = 'inherit';
     const computed = window.getComputedStyle(event.target);
-    // Calculate the height
     const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
                  + event.target.scrollHeight
                  + parseInt(computed.getPropertyValue('border-bottom-width'), 10);
 
-                 event.target.style.height = `${Math.min(height, textMaxHeight)}px`; // Apply the smaller of the calculated height or maxHeight
+                 event.target.style.height = `${Math.min(height, textMaxHeight)}px`;
   }
 
   function processMessage() {
     let convId = $chosenConversationId;
-    routeMessage(input, convId, pdfOutput);
+    let fileOutput = uploadType === 'pdf' ? pdfOutput : csvOutput;
+    routeMessage(input, convId, fileOutput);
     input = ""; 
-    clearFiles ();
-    textAreaElement.style.height = '96px'; // Reset the height after sending
+    clearFiles();
+    textAreaElement.style.height = '96px';
   }
   function scrollChat() {
     if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -168,7 +187,7 @@ function autoExpand(event) {
     if (currentMessageCount > lastMessageCount) {
       scrollChat();
     }
-    lastMessageCount = currentMessageCount; // Update the count after every update
+    lastMessageCount = currentMessageCount;
   });
   
   $: isVisionMode = $selectedMode.includes('Vision');
@@ -185,6 +204,11 @@ $: if (pdfOutput) {
   uploadedPDFCount = 1; } else { uploadedPDFCount = 0; 
 } 
 
+let uploadedCSVCount: number = 0; 
+$: if (csvOutput) {
+  uploadedCSVCount = 1; } else { uploadedCSVCount = 0; 
+} 
+
 function startEditMessage(i: number) {
     editingMessageId = i;
     editingMessageContent = $conversations[$chosenConversationId].history[i].content;
@@ -193,28 +217,33 @@ function startEditMessage(i: number) {
   function cancelEdit() {
     editingMessageId = null;
     editingMessageContent = "";
-    editTextArea.style.height = '96px'; // Reset the height when editing is canceled
+    editTextArea.style.height = '96px';
   }
 
   function submitEdit(i: number) {
-    const editedContent = editingMessageContent; // Temporarily store the edited content
-    // Calculate how many messages need to be deleted
+    const editedContent = editingMessageContent;
     const deleteCount = $conversations[$chosenConversationId].history.length - i;
-    // Delete messages from the end to the current one, including itself
     for (let j = 0; j < deleteCount; j++) {
       deleteMessageFromConversation($conversations[$chosenConversationId].history.length - 1);
     }
-    // Process the edited message as new input
     let convId = $chosenConversationId;
     routeMessage(editedContent, convId, pdfOutput);
-    cancelEdit(); // Reset editing state
+    cancelEdit();
   }
 
   function isImageUrl(url) {
-    // Ensure the URL has no spaces and matches the domain and specific content type for images
     return !/\s/.test(url) && 
            url.includes('blob.core.windows.net') && 
            /rsct=image\/(jpeg|jpg|gif|png|bmp)/i.test(url);
+  }
+
+  function isAudioMessage(message: any): boolean {
+    return message.isAudio === true;
+  }
+
+  function formatMessageForMarkdown(content: string): string {
+    // Implement this function to format the message content for markdown
+    return content;
   }
 
 </script>
@@ -330,11 +359,11 @@ SmoothGPT
             <div class="toolbelt flex space-x-2 pl-20 mb-2 tools">
               {#if message.role === 'assistant'}
                 {#if !isAudioMessage(message) && !isImageUrl(message.content)}
-                  <button class="copyButton w-5" on:click={() => copyTextToClipboard(message.content)}>
+                  <button class="copyButton w-5" on:click={() => copyTextToClipboard(message.content)} on:keypress={() => copyTextToClipboard(message.content)}>
                     <img class="copy-icon" alt="Copy" src={CopyIcon} />
                   </button>
                 {/if}
-                <button class="deleteButton w-5" on:click={() => deleteMessageFromConversation(i)}>
+                <button class="deleteButton w-5" on:click={() => deleteMessageFromConversation(i)} on:keypress={() => deleteMessageFromConversation(i)}>
                   <img class="delete-icon" alt="Delete" src={DeleteIcon} />
                 </button>
               {/if}
@@ -382,22 +411,33 @@ SmoothGPT
 
 
 {:else if isGPTMode}
-<input type="file" id="pdfUpload" accept="application/pdf" 
-on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-input">
-
-<label for="pdfUpload" class="file-label bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">
-  {#if uploadedPDFCount === 0}
-    <img src={PDFIcon} alt="PDF" class="pdf-icon icon-white">
-  {:else}
-    <span class="fileCount">{uploadedPDFCount}</span>
-  {/if}
-</label>
-
-{#if uploadedPDFCount > 0}  
-      <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>  
-    {/if}  
-
+<div class="flex-grow flex flex-col justify-end">
+  <div class="flex items-center bg-secondary rounded-lg p-2">
+    <div class="relative">
+      <button on:click={() => moreButtonsToggle = !moreButtonsToggle} class="p-2 rounded-lg hover:bg-primary">
+        <img src={UploadIcon} alt="Upload" class="w-6 h-6" />
+      </button>
+      {#if moreButtonsToggle}
+        <div class="absolute right-full mr-2 bg-dark-secondary rounded-lg overflow-hidden shadow-lg flex">
+          <label for="pdfUpload" class="cursor-pointer p-2 hover:bg-primary flex items-center" on:click={() => uploadType = 'pdf'}>
+            <img src={PDFIcon} alt="PDF" class="w-6 h-6 mr-2" />
+            PDF
+          </label>
+          <label for="csvUpload" class="cursor-pointer p-2 hover:bg-primary flex items-center" on:click={() => uploadType = 'csv'}>
+            <img src={CSVIcon} alt="CSV" class="w-6 h-6 mr-2" />
+            CSV/XLSX
+          </label>
+        </div>
       {/if}
+    </div>
+    <input type="file" id="pdfUpload" accept="application/pdf" on:change={uploadPDF} class="hidden" bind:this={pdfInputElement}>
+    <input type="file" id="csvUpload" accept=".csv,.xlsx" on:change={uploadCSV} class="hidden" bind:this={csvInputElement}>
+    {#if uploadedPDFCount > 0 || uploadedCSVCount > 0}
+      <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>
+    {/if}
+  </div>
+</div>
+{/if}
 
       <textarea bind:this={textAreaElement}  
   class="w-full min-h-[96px] h-24 rounded-lg p-2 mx-1 mr-0 border-t-2 border-b-2 border-l-2 rounded-r-none bg-primary border-gray-500 resize-none focus:outline-none"   
@@ -408,12 +448,10 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
   on:keydown={(event) => {  
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
     if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
-      event.preventDefault(); // Prevent default insert line break behavior  
+      event.preventDefault();
       processMessage();  
     }  
     else if (!$isStreaming && event.key === "Enter" && isMobile) {  
-      // Allow default behavior on mobile, which is to insert a new line  
-      // Optionally, you can explicitly handle mobile enter key behavior here if needed  
     }  
   }}  
 ></textarea>  

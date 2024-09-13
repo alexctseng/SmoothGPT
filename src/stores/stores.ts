@@ -81,6 +81,7 @@ selectedModel.subscribe(value => {
   export const base64Images = writable([]);
   export const clearFileInputSignal = writable(false);
   export const clearPDFInputSignal = writable(false);
+  export const clearCSVInputSignal = writable(false);  // Add this line
 
   export const isStreaming = writable(false);  
   export const userRequestedStreamClosure = writable(false);  
