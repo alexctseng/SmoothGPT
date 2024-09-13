@@ -98,3 +98,16 @@ export const showTokens = writable(parsedShowTokens);
 showTokens.subscribe(value => {
     localStorage.setItem('show_tokens', JSON.stringify(value));
 });
+
+export const rightSidebarVisible = writable(false);
+
+export interface Prompt {
+  id: string;
+  title: string;
+  content: string;
+}
+
+export const prompts = writable<Prompt[]>([
+  { id: '1', title: 'Example Prompt 1', content: 'This is an example prompt.' },
+  { id: '2', title: 'Example Prompt 2', content: 'This is another example prompt.' },
+]);

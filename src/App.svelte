@@ -40,6 +40,9 @@
   import { handleImageUpload, onSendVisionMessageComplete } from './managers/imageManager';
   import { base64Images } from './stores/stores';
   import { closeStream } from './services/openaiService';  
+  import RightSidebar from './lib/RightSidebar.svelte';
+  import { rightSidebarVisible } from './stores/stores';
+  import PromptMenuIcon from './assets/PromptMenu.svg';
 
   let fileInputElement; 
   let pdfInputElement; 
@@ -246,6 +249,10 @@ function startEditMessage(i: number) {
     return content;
   }
 
+  function toggleRightSidebar() {
+    rightSidebarVisible.update(v => !v);
+  }
+
 </script>
 <title>
   {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
@@ -265,6 +272,15 @@ SmoothGPT
   <Sidebar on:new-chat={() => newChat()} />
     <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
+      
+      <!-- Add the prompt menu button -->
+      <button 
+        on:click={toggleRightSidebar}
+        class="fixed top-4 right-4 z-50 bg-primary p-2 rounded-full hover:bg-hover transition-colors duration-200"
+      >
+        <img src={PromptMenuIcon} alt="Prompt Menu" class="w-6 h-6 filter-white" />
+      </button>
+
       <div class="py-5 bg-primary px-5 flex flex-row justify-between flex-wrap-reverse">
         
       <div class="font-bold text-l">  
@@ -480,6 +496,13 @@ SmoothGPT
 </div>
 </main>
 
+<RightSidebar />
+
 <style>
   @import './styles/styles.css';
+
+  /* Adjust main content when right sidebar is open */
+  :global(.right-sidebar.open + main) {
+    margin-right: 16rem;
+  }
 </style>
