@@ -268,7 +268,7 @@ SmoothGPT
 <Help />
 {/if}
 
-<main class="bg-primary overflow-hidden">
+<main class="bg-primary overflow-hidden h-screen">
   <Sidebar on:new-chat={() => newChat()} />
     <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
@@ -483,16 +483,6 @@ SmoothGPT
   </div>
 
 
-  <div class="flex justify-center bg-primary px-4">
-  <div class="max-w-3xl">
-  <a href="https://ko-fi.com/loreteller" rel="noreferrer" target="_blank" class="block">
-    <div class="font-normal text-sm border-green-800 border-2 text-gray-200 px-5 py-3 rounded-full mb-3">
-        Enjoying SmoothGPT? Contribute to hosting costs & check out my creative work: <span class="underline font-bold">ko-fi.com/loreteller</span>
-    </div>
-</a>
-</div>
-</div>
-  
 </div>
 </main>
 
@@ -502,9 +492,14 @@ SmoothGPT
   @import './styles/styles.css';
 
   /* Adjust main content and prompt menu button when right sidebar is open */
-  :global(.right-sidebar.open + main),
-  :global(.right-sidebar.open ~ button) {
+  :global(.right-sidebar.open + main) {
     margin-right: 16rem;
-    transition: margin-right 0.3s ease-in-out;
+  }
+  :global(.right-sidebar.open ~ button) {
+    right: 17rem;
+  }
+  :global(.right-sidebar),
+  :global(.right-sidebar.open ~ button) {
+    transition: all 0.3s ease-in-out;
   }
 </style>
