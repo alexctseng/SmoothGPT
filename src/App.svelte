@@ -276,7 +276,7 @@ SmoothGPT
       <!-- Add the prompt menu button -->
       <button 
         on:click={toggleRightSidebar}
-        class="fixed top-4 right-4 z-50 bg-primary p-2 rounded-full hover:bg-hover transition-colors duration-200"
+        class="fixed top-4 right-4 z-50 bg-primary p-2 rounded-full hover:bg-hover transition-colors duration-200 {$rightSidebarVisible ? 'mr-64' : ''}"
       >
         <img src={PromptMenuIcon} alt="Prompt Menu" class="w-6 h-6 filter-white" />
       </button>
@@ -501,8 +501,10 @@ SmoothGPT
 <style>
   @import './styles/styles.css';
 
-  /* Adjust main content when right sidebar is open */
-  :global(.right-sidebar.open + main) {
+  /* Adjust main content and prompt menu button when right sidebar is open */
+  :global(.right-sidebar.open + main),
+  :global(.right-sidebar.open ~ button) {
     margin-right: 16rem;
+    transition: margin-right 0.3s ease-in-out;
   }
 </style>

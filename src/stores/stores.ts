@@ -1,5 +1,5 @@
 import { type Writable, writable } from "svelte/store";
-  import type { ChatCompletionRequestMessage } from "openai";
+import type { ChatCompletionRequestMessage } from "openai";
 
 export interface Conversation {
   history: ChatCompletionRequestMessage[];
@@ -13,14 +13,20 @@ export interface DefaultAssistantRole {
   type: string;
 }
 
-export const settingsVisible = writable(false)
-export const helpVisible = writable(false)
-export const menuVisible = writable(false)
+export interface Prompt {
+  id: string;
+  title: string;
+  content: string;
+}
 
-let storedApiKey = localStorage.getItem("api_key")
+export const settingsVisible = writable(false);
+export const helpVisible = writable(false);
+export const menuVisible = writable(false);
+
+let storedApiKey = localStorage.getItem("api_key");
 let parsedApiKey = storedApiKey !== null ? JSON.parse(storedApiKey) : null;
 
-export const apiKey:Writable<string|null> = writable(parsedApiKey)
+export const apiKey: Writable<string|null> = writable(parsedApiKey);
 apiKey.subscribe((value) => localStorage.setItem("api_key", JSON.stringify(value)));
 
 let storedCombinedTokens = localStorage.getItem('combined_tokens');
@@ -29,7 +35,7 @@ export const combinedTokens = writable(parsedCombinedTokens);
 combinedTokens.subscribe((value) => localStorage.setItem("combined_tokens", JSON.stringify(value)));
 
 let storedDefaultAssistantRole = localStorage.getItem('default_assistant_role');
-let parsedDefaultAssistantRole: DefaultAssistantRole = storedDefaultAssistantRole !== null ? JSON.parse(storedDefaultAssistantRole) : 0;
+let parsedDefaultAssistantRole: DefaultAssistantRole = storedDefaultAssistantRole !== null ? JSON.parse(storedDefaultAssistantRole) : null;
 export const defaultAssistantRole = writable(parsedDefaultAssistantRole || {
     role: "You are a helpful assistant.",
     type: "system",
@@ -52,14 +58,12 @@ conversations.subscribe((value) => {
   localStorage.setItem('conversations', JSON.stringify(value));
 });
 
-
 export const selectedModel = writable(localStorage.getItem('selectedModel') || 'gpt-3.5-turbo');
 export const selectedVoice = writable(localStorage.getItem('selectedVoice') || 'alloy');
 export const selectedMode = writable(localStorage.getItem('selectedMode') || 'GPT');
 
 export const selectedSize = writable(localStorage.getItem('selectedSize') || '1024x1024');
 export const selectedQuality = writable(localStorage.getItem('selectedQuality') || 'standard');
-
 
 selectedModel.subscribe(value => {
     localStorage.setItem("selectedModel", value);
@@ -76,19 +80,20 @@ selectedModel.subscribe(value => {
   selectedMode.subscribe(value => {
     localStorage.setItem("selectedMode", value);
   });
-  export const audioUrls = writable([]);
 
-  export const base64Images = writable([]);
-  export const clearFileInputSignal = writable(false);
-  export const clearPDFInputSignal = writable(false);
-  export const clearCSVInputSignal = writable(false);  // Add this line
+export const audioUrls = writable([]);
 
-  export const isStreaming = writable(false);  
-  export const userRequestedStreamClosure = writable(false);  
+export const base64Images = writable([]);
+export const clearFileInputSignal = writable(false);
+export const clearPDFInputSignal = writable(false);
+export const clearCSVInputSignal = writable(false);  // Add this line
 
-  export const streamContext = writable({ streamText: '', convId: null });  
+export const isStreaming = writable(false);  
+export const userRequestedStreamClosure = writable(false);  
 
-  let storedShowTokens = localStorage.getItem('show_tokens');
+export const streamContext = writable({ streamText: '', convId: null });  
+
+let storedShowTokens = localStorage.getItem('show_tokens');
 let parsedShowTokens = storedShowTokens !== null ? JSON.parse(storedShowTokens) : false;
 
 // Create the writable store with the initial value, either from localStorage or default
@@ -101,13 +106,7 @@ showTokens.subscribe(value => {
 
 export const rightSidebarVisible = writable(false);
 
-export interface Prompt {
-  id: string;
-  title: string;
-  content: string;
-}
-
 export const prompts = writable<Prompt[]>([
-  { id: '1', title: 'Example Prompt 1', content: 'This is an example prompt.' },
-  { id: '2', title: 'Example Prompt 2', content: 'This is another example prompt.' },
+  { id: '1', title: 'Legal Document Review', content: 'Please review the following legal document and highlight any potential issues or areas of concern:' },
+  { id: '2', title: 'Contract Clause Explanation', content: 'Explain the following contract clause in simple terms and its potential implications:' },
 ]);
