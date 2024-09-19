@@ -68,7 +68,7 @@ const errorMessage: ChatCompletionRequestMessage[] = [
 ];
 
 export function initOpenAIApi(): void {
-  const key = get(apiKey);
+  const key = get(apiKey) || import.meta.env.VITE_OPENAI_API_KEY;
   if (key) {
     configuration = new Configuration({ apiKey: key });
     openai = new OpenAIApi(configuration);

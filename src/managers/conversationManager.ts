@@ -1,6 +1,6 @@
 import type { ChatCompletionRequestMessage } from "openai";
 import { get, writable } from "svelte/store";
-import { conversations, chosenConversationId, combinedTokens } from "../stores/stores";
+import { conversations, chosenConversationId, combinedTokens, apiKey } from "../stores/stores";
 import { type Conversation, defaultAssistantRole } from "../stores/stores";
 import { selectedModel, selectedVoice, audioUrls, base64Images } from '../stores/stores';
 

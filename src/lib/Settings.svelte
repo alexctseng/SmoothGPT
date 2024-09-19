@@ -23,12 +23,12 @@
   $: $selectedMode, updateFilteredModels();
     $: $models, updateFilteredModels();
 
-  let localApiTextField: string = get(apiKey) || ''; 
-  $: localApiTextField = $apiKey || '';
+  let localApiTextField: string = get(apiKey) || import.meta.env.VITE_OPENAI_API_KEY || ''; 
+  $: localApiTextField = $apiKey || import.meta.env.VITE_OPENAI_API_KEY || '';
 
   let apiTextField = '';
   apiKey.subscribe(value => {
-    apiTextField = value || '';
+    apiTextField = value || import.meta.env.VITE_OPENAI_API_KEY || '';
     localApiTextField = apiTextField;
   });
 
