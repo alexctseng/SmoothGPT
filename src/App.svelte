@@ -430,26 +430,30 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
   </div>
 </main>
 
-<!-- Prompt Library toggle button -->
-<button
-  class="fixed top-4 right-4 z-50 bg-primary text-white p-2 rounded-lg flex items-center justify-center"
-  on:click={togglePromptLibrary}
-  style="width: 40px; height: 40px;"
->
-  <img
-    src="/src/assets/PromptLibrary.svg"
-    alt="Toggle Prompt Library"
-    class="w-6 h-6"
-    style="transform: {isPromptLibraryVisible ? 'rotate(180deg)' : 'rotate(0deg)'};"
-  />
-</button>
+<!-- Prompt Library container -->
+<div class="prompt-library-container fixed top-0 right-0 h-screen flex items-start z-50 transition-all duration-300 ease-in-out"
+     style="transform: translateX({isPromptLibraryVisible ? '0' : 'calc(100% - 40px)'});">
+  <!-- Toggle button -->
+  <button
+    class="bg-primary text-white p-2 rounded-l-lg flex items-center justify-center prompt-library-toggle"
+    on:click={togglePromptLibrary}
+    style="width: 40px; height: 40px;"
+  >
+    <img
+      src="/src/assets/PromptLibrary.svg"
+      alt="Toggle Prompt Library"
+      class="w-6 h-6"
+      style="transform: {isPromptLibraryVisible ? 'rotate(180deg)' : 'rotate(0deg)'};"
+    />
+  </button>
 
-<!-- Prompt Library content -->
-<div
-  class="fixed top-0 right-0 h-screen bg-primary transition-all duration-300 ease-in-out overflow-y-auto z-40"
-  style="width: {isPromptLibraryVisible ? '300px' : '0px'}; overflow-x: hidden;"
->
-  <PromptLibrary />
+  <!-- Prompt Library content -->
+  <div
+    class="h-full bg-primary overflow-y-auto"
+    style="width: 300px;"
+  >
+    <PromptLibrary />
+  </div>
 </div>
 
 <style>
@@ -465,7 +469,19 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
     margin-top: auto;
   }
 
-  .translate-x-full {
-    transform: translateX(100%);
+  .prompt-library-container {
+    width: 340px;
+  }
+
+  .prompt-library-toggle {
+    transition: background-color 0.3s ease;
+  }
+
+  .prompt-library-toggle:hover {
+    background-color: #2c2c2c;
+  }
+
+  .prompt-library-toggle img {
+    transition: transform 0.3s ease;
   }
 </style>
