@@ -449,8 +449,8 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
   <!-- Prompt Library content -->
   <div
-    class="h-full bg-primary overflow-y-auto"
-    style="width: 300px;"
+    class="h-full bg-primary overflow-y-auto prompt-library-content"
+    style="width: 300px; display: {isPromptLibraryVisible ? 'block' : 'none'};"
   >
     <PromptLibrary />
   </div>
@@ -475,6 +475,7 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
   .prompt-library-toggle {
     transition: background-color 0.3s ease;
+    z-index: 60;
   }
 
   .prompt-library-toggle:hover {
@@ -483,5 +484,9 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
   .prompt-library-toggle img {
     transition: transform 0.3s ease;
+  }
+
+  .prompt-library-content {
+    transition: all 0.3s ease-in-out;
   }
 </style>
