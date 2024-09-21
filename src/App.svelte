@@ -256,17 +256,11 @@ SmoothGPT
 
         {#if message.role !=='system'}
 
-          <div class="message relative inline-block bg-primary px-2 pb-5 flex flex-col">
-            <div class="profile-picture flex">
-              <div>
-                <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-6 h-6 ml-10" />
-              </div>
-              <div class="relative ml-3 font-bold">
-                  {#if message.role === 'assistant'}
-                    ChatGPT
-                  {:else}
-                    You
-                  {/if}
+          <div class="message relative inline-block w-full px-2 pb-5 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'}">
+            <div class="profile-picture flex items-center mb-2">
+              <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-8 h-8 ml-4" />
+              <div class="ml-3 font-bold text-lg">
+                {message.role === 'assistant' ? 'ChatGPT' : 'You'}
               </div>
             </div>
 
@@ -399,31 +393,30 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
       {/if}
 
-      <textarea bind:this={textAreaElement}  
-  class="w-full min-h-[96px] h-24 rounded-lg p-2 mx-1 mr-0 border-t-2 border-b-2 border-l-2 rounded-r-none bg-primary border-gray-500 resize-none focus:outline-none"   
-  placeholder="Type your message..."   
-  bind:value={input}   
-  on:input={autoExpand}
-  style="height: 96px; overflow-y: auto; overflow:visible !important;"
-  on:keydown={(event) => {  
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
-    if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
-      event.preventDefault(); // Prevent default insert line break behavior  
-      processMessage();  
-    }  
-    else if (!$isStreaming && event.key === "Enter" && isMobile) {  
-      // Allow default behavior on mobile, which is to insert a new line  
-      // Optionally, you can explicitly handle mobile enter key behavior here if needed  
-    }  
-  }}  
-></textarea>  
-<button class="bg-chat rounded-lg py-2 px-4 mx-1 ml-0 border-t-2 border-b-2 border-r-2  border-gray-500 rounded-l-none cursor-pointer " on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} disabled={!$isStreaming && !input.trim().length}>    
-  {#if $isStreaming}    
-      <img class="icon-white min-w-[24px] w-[24px]" alt="Wait" src={WaitIcon} />    
-  {:else}    
-      <img class="icon-white min-w-[24px] w-[24px]" alt="Send" src={SendIcon} />    
-  {/if}    
-</button>  
+      <div class="input-area flex items-center bg-chat rounded-lg p-2">
+        <textarea bind:this={textAreaElement}  
+          class="w-full min-h-[48px] max-h-[200px] rounded-lg p-2 mr-2 bg-primary text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"   
+          placeholder="Type your message..."   
+          bind:value={input}   
+          on:input={autoExpand}
+          on:keydown={(event) => {  
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
+            if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
+              event.preventDefault();
+              processMessage();  
+            }  
+          }}  
+        ></textarea>  
+        <button class="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer transition-colors duration-200" 
+                on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} 
+                disabled={!$isStreaming && !input.trim().length}>    
+          {#if $isStreaming}    
+            <img class="icon-white w-6 h-6" alt="Wait" src={WaitIcon} />    
+          {:else}    
+            <img class="icon-white w-6 h-6" alt="Send" src={SendIcon} />    
+          {/if}    
+        </button>  
+      </div>
      
     </div>
   </div>

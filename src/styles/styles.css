@@ -114,4 +114,14 @@ filter: none;
 .message p {
 padding-bottom: 0.5rem;
 
+}.bg-user-message {
+  background-color: #2b3038;
+  border-radius: 0 15px 15px 15px;
+  margin-bottom: 1rem;
+}
+
+.bg-assistant-message {
+  background-color: #21252b;
+  border-radius: 15px 0 15px 15px;
+  margin-bottom: 1rem;
 }

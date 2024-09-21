@@ -2,12 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 *{
-    font-family : 'Segoe UI', sans-serif; 
+    font-family: 'Inter', sans-serif;
 }
 
 body {
-    background-color: #21252b;
+    background-color: #1a1c23;
+    color: #e2e8f0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
 }
 
 
