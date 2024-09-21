@@ -239,29 +239,15 @@ SmoothGPT
 <Help />
 {/if}
 
-<main class="bg-primary overflow-hidden">
+<main class="bg-primary overflow-hidden flex">
   <Sidebar on:new-chat={() => newChat()} />
-    <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
+  <div class="flex-grow flex">
+    <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager flex-grow">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
       
-      <!-- Add the toggle button -->
-      <button
-        class="absolute top-4 right-4 z-50 bg-primary text-white px-3 py-2 rounded"
-        on:click={togglePromptLibrary}
-      >
-        {isPromptLibraryVisible ? 'Hide' : 'Show'} Prompt Library
-      </button>
-
-      <!-- Position the PromptLibrary component -->
-      <div
-        class="fixed right-0 top-0 h-full bg-primary transition-transform duration-300 ease-in-out z-40"
-        class:translate-x-full={!isPromptLibraryVisible}
-        style:width="300px"
-      >
-        <PromptLibrary />
-      </div>
-
-      <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
+      <div class="flex flex-grow overflow-hidden">
+        <div class="flex-grow flex flex-col">
+          <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
       {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
         <div class="flex flex-col max-w-4xl w-full pt-6 grow">
           
@@ -361,17 +347,16 @@ SmoothGPT
 {/if}        
         
           {/each}
-      </div>
-    </div>
-      {:else}
-        <div class="flex justify-center items-center h-full">
-          <p>No conversation selected. Start a new conversation.</p>
+          </div>
         </div>
-      {/if}
-    </div>
+        {:else}
+          <div class="flex justify-center items-center h-full">
+            <p>No conversation selected. Start a new conversation.</p>
+          </div>
+        {/if}
+      </div>
 
-
-    <div class="inputbox-container w-full flex justify-center items-center bg-primary">
+      <div class="inputbox-container w-full flex justify-center items-center bg-primary">
 
     <div class="inputbox flex flex-1 bg-primary mt-auto mx-auto max-w-5xl mb-6">
       {#if isVisionMode}  
@@ -432,10 +417,26 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
         </button>  
       </div>
      
+      </div>
     </div>
   </div>
 
+  <!-- Position the PromptLibrary component -->
+  <div
+    class="h-full bg-primary transition-all duration-300 ease-in-out"
+    style="width: {isPromptLibraryVisible ? '300px' : '0px'}; overflow: {isPromptLibraryVisible ? 'auto' : 'hidden'};"
+  >
+    <PromptLibrary />
+  </div>
 </main>
+
+<!-- Add the toggle button -->
+<button
+  class="fixed top-4 right-4 z-50 bg-primary text-white px-3 py-2 rounded"
+  on:click={togglePromptLibrary}
+>
+  {isPromptLibraryVisible ? 'Hide' : 'Show'} Prompt Library
+</button>
 
 <style>
   @import './styles/styles.css';
