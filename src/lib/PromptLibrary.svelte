@@ -97,8 +97,10 @@
   }
 </script>
 
-<div class="prompt-library">
-  <div class="search-bar">
+<div class="prompt-library h-full flex flex-col">
+  <h2 class="text-xl font-bold mb-4">Prompt Library</h2>
+  
+  <div class="search-bar mb-4">
     <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library...">
     <select bind:value={selectedCategory}>
       <option value="">No category selected</option>
@@ -108,9 +110,9 @@
     </select>
   </div>
 
-  <div class="prompts-grid">
+  <div class="prompts-grid flex-grow overflow-y-auto">
     {#each filteredPrompts as prompt (prompt.id)}
-      <div class="prompt-card">
+      <div class="prompt-card mb-4">
         <h3>{prompt.title}</h3>
         <p>{prompt.description}</p>
         <span class="category-tag">{prompt.category}</span>
@@ -122,7 +124,7 @@
     {/each}
   </div>
 
-  <div class="library-actions">
+  <div class="library-actions mt-4">
     <button on:click={() => isCreatingPrompt = true}>+ Create</button>
     <button on:click={() => isManagingCategories = true}>Manage Categories</button>
   </div>
@@ -164,9 +166,9 @@
 
 <style>
   .prompt-library {
-    max-width: 1200px;
-    margin: 0 auto;
     padding: 20px;
+    background-color: #1a1a1a;
+    color: white;
   }
 
   .search-bar {
@@ -182,8 +184,8 @@
   }
 
   .prompts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 20px;
   }
 
