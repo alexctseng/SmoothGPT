@@ -4,17 +4,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#1E1E1E', 
-        secondary: '#2D2D2D', 
+        primary: '#1A1A1A', 
+        secondary: '#252525', 
         warningHover: '#FF6B6B',
         warning: '#D64545',
         good3: '#A0E57E',
         good2: '#4EA8DE',
         good: '#3B82F6',
-        hover: '#383838',
-        hover2: '#454545',
-        chat: '#4A4A4A',
-        accent: '#61DAFB',
+        hover: '#333333',
+        hover2: '#404040',
+        chat: '#2A2A2A',
+        accent: '#10A37F',
       },
             opacity: {
         'hover': '.2',

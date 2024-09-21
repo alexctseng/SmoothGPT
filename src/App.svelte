@@ -256,10 +256,10 @@ SmoothGPT
 
         {#if message.role !=='system'}
 
-          <div class="message relative inline-block w-full p-4 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'}">
-            <div class="profile-picture flex items-center mb-2">
-              <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-8 h-8 ml-4" />
-              <div class="ml-3 font-bold text-lg">
+          <div class="message relative inline-block w-full p-6 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'} rounded-lg shadow-md">
+            <div class="profile-picture flex items-center mb-3">
+              <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-10 h-10 ml-2" />
+              <div class="ml-4 font-bold text-xl">
                 {message.role === 'assistant' ? 'ChatGPT' : 'You'}
               </div>
             </div>
@@ -283,7 +283,7 @@ SmoothGPT
             {:else}
 
 
-            <div class="message-display pl-20 pr-5 md:px-20 text-[1rem]">
+            <div class="message-display pl-16 pr-5 md:px-16 text-[1.1rem] leading-relaxed">
               {#if isImageUrl(message.content)}
           <img src={message.content} alt="Generated" class="max-w-full h-auto my-3"/>
           <div class="text-sm text-gray-500">
@@ -359,7 +359,7 @@ SmoothGPT
 
     <div class="inputbox-container w-full flex justify-center items-center bg-primary">
 
-    <div class="inputbox flex flex-1 bg-primary mt-auto mx-auto max-w-3xl mb-3">
+    <div class="inputbox flex flex-1 bg-primary mt-auto mx-auto max-w-5xl mb-6">
       {#if isVisionMode}  
       <input type="file" id="imageUpload" multiple accept="image/*" on:change="{handleImageUpload}" bind:this={fileInputElement} class="file-input">  
       <label for="imageUpload" class="file-label bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">  
@@ -393,9 +393,9 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
       {/if}
 
-      <div class="input-area flex items-center bg-chat rounded-lg p-3 shadow-md">
+      <div class="input-area flex items-center bg-chat rounded-xl p-4 shadow-lg w-full">
         <textarea bind:this={textAreaElement}  
-          class="w-full min-h-[48px] max-h-[200px] rounded-lg p-3 mr-3 bg-primary text-white resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"   
+          class="w-full min-h-[56px] max-h-[200px] rounded-xl p-4 mr-4 bg-primary text-white resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 text-lg"   
           placeholder="Type your message..."   
           bind:value={input}   
           on:input={autoExpand}
@@ -407,13 +407,13 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
             }  
           }}  
         ></textarea>  
-        <button class="bg-accent hover:bg-blue-600 rounded-full p-3 cursor-pointer transition-all duration-200 transform hover:scale-105" 
+        <button class="bg-accent hover:bg-blue-600 rounded-full p-4 cursor-pointer transition-all duration-200 transform hover:scale-105 flex-shrink-0" 
                 on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} 
                 disabled={!$isStreaming && !input.trim().length}>    
           {#if $isStreaming}    
-            <img class="icon-white w-6 h-6 animate-spin" alt="Wait" src={WaitIcon} />    
+            <img class="icon-white w-7 h-7 animate-spin" alt="Wait" src={WaitIcon} />    
           {:else}    
-            <img class="icon-white w-6 h-6" alt="Send" src={SendIcon} />    
+            <img class="icon-white w-7 h-7" alt="Send" src={SendIcon} />    
           {/if}    
         </button>  
       </div>
