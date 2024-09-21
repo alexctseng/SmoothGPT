@@ -247,16 +247,16 @@ SmoothGPT
     
 
       </div>
-      <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow" bind:this={chatContainer}>
+      <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
       {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
-        <div class="flex flex-col max-w-3xl pt-5 grow">
+        <div class="flex flex-col max-w-4xl w-full pt-6 grow">
           
-          <div>
+          <div class="space-y-6">
         {#each $conversations[$chosenConversationId].history as message, i}
 
         {#if message.role !=='system'}
 
-          <div class="message relative inline-block w-full px-2 pb-5 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'}">
+          <div class="message relative inline-block w-full p-4 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'}">
             <div class="profile-picture flex items-center mb-2">
               <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-8 h-8 ml-4" />
               <div class="ml-3 font-bold text-lg">
@@ -393,9 +393,9 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
       {/if}
 
-      <div class="input-area flex items-center bg-chat rounded-lg p-2">
+      <div class="input-area flex items-center bg-chat rounded-lg p-3 shadow-md">
         <textarea bind:this={textAreaElement}  
-          class="w-full min-h-[48px] max-h-[200px] rounded-lg p-2 mr-2 bg-primary text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"   
+          class="w-full min-h-[48px] max-h-[200px] rounded-lg p-3 mr-3 bg-primary text-white resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"   
           placeholder="Type your message..."   
           bind:value={input}   
           on:input={autoExpand}
@@ -407,11 +407,11 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
             }  
           }}  
         ></textarea>  
-        <button class="bg-blue-500 hover:bg-blue-600 rounded-full p-2 cursor-pointer transition-colors duration-200" 
+        <button class="bg-accent hover:bg-blue-600 rounded-full p-3 cursor-pointer transition-all duration-200 transform hover:scale-105" 
                 on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} 
                 disabled={!$isStreaming && !input.trim().length}>    
           {#if $isStreaming}    
-            <img class="icon-white w-6 h-6" alt="Wait" src={WaitIcon} />    
+            <img class="icon-white w-6 h-6 animate-spin" alt="Wait" src={WaitIcon} />    
           {:else}    
             <img class="icon-white w-6 h-6" alt="Send" src={SendIcon} />    
           {/if}    

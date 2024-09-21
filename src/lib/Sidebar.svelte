@@ -122,8 +122,8 @@ let editingTitleId = null;
 </script>
 
 <div class="flex flex-col text-white/90">
-  <div class="{$menuVisible == true ? 'translate-x-0' : '-translate-x-[100%] md:translate-x-0'} duration-200 h-full fixed md:flex w-[260px] flex-col bg-secondary z-40 shadow-lg">
-    <nav class="flex h-full flex-1 flex-col space-y-2 p-4 bg-secondary">
+  <div class="{$menuVisible == true ? 'translate-x-0' : '-translate-x-[100%] md:translate-x-0'} duration-200 h-full fixed md:flex w-[280px] flex-col bg-secondary z-40 shadow-lg">
+    <nav class="flex h-full flex-1 flex-col space-y-3 p-5 bg-secondary">
      
       <button on:click={() => {menuVisible.set(false);}} class="md:hidden z-20 flex py-3 px-3 items-center gap-3 rounded-md hover:bg-hover hover:opacity-hover transition-colors duration-200 cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/50">
         Close menu
