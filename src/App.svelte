@@ -6,6 +6,7 @@
   import Sidebar from "./lib/Sidebar.svelte";
   import Settings from "./lib/Settings.svelte";
   import Help from "./lib/Help.svelte";
+  import PromptLibrary from "./lib/PromptLibrary.svelte";
   import SvelteMarkdown from "svelte-markdown";
   import CodeRenderer from "./renderers/Code.svelte";
   import UserCodeRenderer from "./renderers/userCode.svelte";
@@ -240,6 +241,8 @@ SmoothGPT
       <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
       {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
         <div class="flex flex-col max-w-4xl w-full pt-6 grow">
+          
+          <PromptLibrary />
           
           <div class="space-y-6">
         {#each $conversations[$chosenConversationId].history as message, i}
