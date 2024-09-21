@@ -430,13 +430,32 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
   </div>
 </main>
 
-<!-- Add the toggle button -->
-<button
-  class="fixed top-4 right-4 z-50 bg-primary text-white px-3 py-2 rounded"
-  on:click={togglePromptLibrary}
->
-  {isPromptLibraryVisible ? 'Hide' : 'Show'} Prompt Library
-</button>
+<!-- Prompt Library container with toggle button -->
+<div class="flex fixed top-4 right-0 z-50">
+  <!-- Toggle button container -->
+  <div class="flex items-center">
+    <button
+      class="bg-primary text-white p-2 rounded-l-lg flex items-center justify-center"
+      on:click={togglePromptLibrary}
+      style="width: 40px; height: 40px;"
+    >
+      <img
+        src="assets/PromptLibrary.svg"
+        alt="Toggle Prompt Library"
+        class="w-6 h-6"
+        style="transform: {isPromptLibraryVisible ? 'rotate(180deg)' : 'rotate(0deg)'};"
+      />
+    </button>
+  </div>
+
+  <!-- Prompt Library content -->
+  <div
+    class="h-screen bg-primary transition-all duration-300 ease-in-out overflow-y-auto"
+    style="width: {isPromptLibraryVisible ? '300px' : '0px'}; overflow-x: hidden;"
+  >
+    <PromptLibrary />
+  </div>
+</div>
 
 <style>
   @import './styles/styles.css';
