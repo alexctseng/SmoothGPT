@@ -236,9 +236,7 @@ SmoothGPT
   <Sidebar on:new-chat={() => newChat()} />
     <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
-      <div class="py-5 bg-primary px-5 flex flex-row justify-between flex-wrap-reverse">
-        <!-- Removed the model display -->
-      </div>
+      <!-- Removed the entire flex container -->
       <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
       {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
         <div class="flex flex-col max-w-4xl w-full pt-6 grow">
