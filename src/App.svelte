@@ -218,6 +218,12 @@ function startEditMessage(i: number) {
            /rsct=image\/(jpeg|jpg|gif|png|bmp)/i.test(url);
   }
 
+  let isPromptLibraryVisible = false;
+
+  function togglePromptLibrary() {
+    isPromptLibraryVisible = !isPromptLibraryVisible;
+  }
+
 </script>
 <title>
   {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
@@ -237,12 +243,27 @@ SmoothGPT
   <Sidebar on:new-chat={() => newChat()} />
     <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
-      <!-- Removed the entire flex container -->
+      
+      <!-- Add the toggle button -->
+      <button
+        class="absolute top-4 right-4 z-50 bg-primary text-white px-3 py-2 rounded"
+        on:click={togglePromptLibrary}
+      >
+        {isPromptLibraryVisible ? 'Hide' : 'Show'} Prompt Library
+      </button>
+
+      <!-- Position the PromptLibrary component -->
+      <div
+        class="fixed right-0 top-0 h-full bg-primary transition-transform duration-300 ease-in-out z-40"
+        class:translate-x-full={!isPromptLibraryVisible}
+        style:width="300px"
+      >
+        <PromptLibrary />
+      </div>
+
       <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
       {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
         <div class="flex flex-col max-w-4xl w-full pt-6 grow">
-          
-          <PromptLibrary />
           
           <div class="space-y-6">
         {#each $conversations[$chosenConversationId].history as message, i}
@@ -427,5 +448,9 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
   :global(.inputbox-container) {
     margin-top: auto;
+  }
+
+  .translate-x-full {
+    transform: translateX(100%);
   }
 </style>
