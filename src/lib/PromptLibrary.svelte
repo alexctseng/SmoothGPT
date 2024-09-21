@@ -20,6 +20,7 @@
   let selectedCategory = '';
   let isCreatingPrompt = false;
   let isManagingCategories = false;
+  let newCategory = '';
 
   // New prompt form data
   let newPrompt: Prompt = {
@@ -82,7 +83,10 @@
   }
 
   function addCategory(category: string) {
-    categories.update(c => [...c, category]);
+    if (category.trim()) {
+      categories.update(c => [...c, category.trim()]);
+      newCategory = '';
+    }
   }
 
   function deleteCategory(category: string) {
