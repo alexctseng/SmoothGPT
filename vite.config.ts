@@ -9,28 +9,29 @@ export default defineConfig({
   define: {
     'import.meta.env.VITE_OPENAI_API_KEY': JSON.stringify(process.env.VITE_OPENAI_API_KEY),
   },
-
-    build: {
-      target: "es2022",
-      rollupOptions: {
-        output: {
-          // PDF.js might benefit from this for handling assets like workers
-          manualChunks(id) {
-            if (id.includes('pdf.worker.min.js')) {
-              return 'pdf.worker.min';
-            }
+  build: {
+    target: "es2022",
+    rollupOptions: {
+      output: {
+        // PDF.js might benefit from this for handling assets like workers
+        manualChunks(id) {
+          if (id.includes('pdf.worker.min.js')) {
+            return 'pdf.worker.min';
           }
         }
       }
     },
-    esbuild: {
-      target: "es2022"
-    },
-    optimizeDeps:{
-      esbuildOptions: {
-        target: "es2022",
-      }
+    commonjsOptions: {
+      include: [/tailwind\.config\.js/, /node_modules/]
     }
-
-
+  },
+  esbuild: {
+    target: "es2022"
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "es2022",
+    },
+    include: ['tailwindcss/plugin']
+  }
 })

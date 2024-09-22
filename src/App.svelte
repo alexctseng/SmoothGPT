@@ -24,8 +24,8 @@
   import EditIcon from "./assets/edit.svg";
   import SendIcon from "./assets/send.svg";
   import WaitIcon from "./assets/wait.svg"; 
-  import  UploadIcon from "./assets/upload-icon.svg";
-  import  PDFIcon from "./assets/pdf-icon.svg";
+  import UploadIcon from "./assets/upload-icon.svg";
+  import PDFIcon from "./assets/pdf-icon.svg";
   import { afterUpdate } from "svelte";
   import { processPDF } from './managers/pdfManager';
   import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, clearPDFInputSignal } from "./stores/stores";
@@ -37,6 +37,12 @@
   import { handleImageUpload, onSendVisionMessageComplete } from './managers/imageManager';
   import { base64Images } from './stores/stores';
   import { closeStream } from './services/openaiService';  
+
+  let isCollapsed = false;
+
+  function handleSidebarToggle(event) {
+    isCollapsed = event.detail.isCollapsed;
+  }
 
   let fileInputElement; 
   let pdfInputElement; 
@@ -250,17 +256,6 @@ SmoothGPT
 <Help />
 {/if}
 
-<script lang="ts">
-  // ... (keep existing imports and script content)
-  import { onMount } from 'svelte';
-  import Sidebar from "./lib/Sidebar.svelte";
-
-  let isCollapsed = false;
-
-  function handleSidebarToggle(event) {
-    isCollapsed = event.detail.isCollapsed;
-  }
-</script>
 
 <main class="bg-primary overflow-hidden flex flex-col h-screen">
   <div class="flex flex-grow overflow-hidden">
