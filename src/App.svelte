@@ -226,7 +226,7 @@ function startEditMessage(i: number) {
 
   function handleUsePrompt(event) {
     input = event.detail.text;
-    isPromptLibraryVisible = false;
+    // Removed the line that closes the Prompt Library
   }
 
   onMount(() => {
