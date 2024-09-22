@@ -431,7 +431,7 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
         <!-- Prompt Library sidebar -->
         <div
           class="h-full bg-secondary transition-all duration-300 ease-in-out overflow-hidden flex"
-          style="width: {isPromptLibraryVisible ? '300px' : '0px'};"
+          style="width: {isPromptLibraryVisible ? 'auto' : '0px'};"
         >
           <PromptLibrary />
         </div>

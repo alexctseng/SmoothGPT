@@ -120,8 +120,8 @@
   }
 </script>
 
-<div class="prompt-library h-full flex flex-col bg-secondary text-white/90">
-  <div class="flex flex-col h-full">
+<div class="prompt-library h-full flex flex-col bg-secondary text-white/90 w-full">
+  <div class="flex flex-col h-full w-full">
     <div class="search-bar mb-4">
       <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input mb-2">
     </div>
