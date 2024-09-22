@@ -98,42 +98,42 @@
   }
 </script>
 
-<div class="prompt-library h-full flex flex-col bg-secondary text-white/90">
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-bold">Prompt Library</h2>
-    <button on:click={() => menuVisible.set(false)} class="text-sm text-gray-400 hover:text-white">Close</button>
-  </div>
-  <p class="text-xs text-gray-400 mb-4">
-    For information on responsible AI use, visit <a href="https://www.pleasedontshareanyprivilegedinformation.com/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">our guidelines</a>.
-  </p>
-  
-  <div class="search-bar mb-4">
-    <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input">
-    <select bind:value={selectedCategory} class="category-select">
-      <option value="">All categories</option>
-      {#each $categories as category}
-        <option value={category}>{category}</option>
-      {/each}
-    </select>
-  </div>
+<div class="prompt-library h-full flex flex-col bg-primary text-white/90">
+  <div class="flex flex-col h-full">
+    <div class="search-bar mb-4">
+      <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input">
+      <select bind:value={selectedCategory} class="category-select">
+        <option value="">No category selected</option>
+        {#each $categories as category}
+          <option value={category}>{category}</option>
+        {/each}
+      </select>
+    </div>
 
-  <div class="prompts-grid flex-grow overflow-y-auto">
-    {#each filteredPrompts as prompt (prompt.id)}
-      <div class="prompt-card">
-        <h3 class="prompt-title">{prompt.title}</h3>
-        <p class="prompt-description">{prompt.description}</p>
-        <span class="category-tag">{prompt.category}</span>
-        <div class="prompt-actions">
-          <button on:click={() => editPrompt(prompt)} class="action-button edit-button">Edit</button>
-          <button on:click={() => deletePrompt(prompt.id)} class="action-button delete-button">Delete</button>
+    <div class="prompts-list flex-grow overflow-y-auto">
+      {#each filteredPrompts as prompt (prompt.id)}
+        <div class="prompt-item">
+          <div class="prompt-header">
+            <h3 class="prompt-title">{prompt.title}</h3>
+            <div class="prompt-actions">
+              <button on:click={() => editPrompt(prompt)} class="action-button edit-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button on:click={() => deletePrompt(prompt.id)} class="action-button delete-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+            </div>
+          </div>
+          <p class="prompt-description">{prompt.description}</p>
+          <span class="category-tag">{prompt.category || 'No category'}</span>
         </div>
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </div>
 
-  <div class="library-actions mt-4">
-    <button on:click={() => isCreatingPrompt = true} class="primary-button">+ Create Prompt</button>
-    <button on:click={() => isManagingCategories = true} class="secondary-button">Manage Categories</button>
+    <div class="library-actions mt-4">
+      <button on:click={() => isCreatingPrompt = true} class="primary-button">+ Create</button>
+      <button on:click={() => isManagingCategories = true} class="secondary-button">Manage</button>
+    </div>
   </div>
 
   {#if isCreatingPrompt}
@@ -181,93 +181,96 @@
 
 <style>
   .prompt-library {
-    padding: 20px;
+    padding: 16px;
     height: 100%;
     overflow-y: auto;
   }
 
   .search-bar {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
   .search-input,
   .category-select {
     flex: 1;
-    padding: 10px;
+    padding: 8px;
     background-color: #2c2c2c;
     border: 1px solid #3a3a3a;
     border-radius: 4px;
     color: white;
+    font-size: 14px;
   }
 
-  .prompts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
+  .prompts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .prompt-card {
+  .prompt-item {
     background-color: #2c2c2c;
-    border-radius: 8px;
-    padding: 15px;
+    border-radius: 6px;
+    padding: 12px;
     position: relative;
   }
 
+  .prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
   .prompt-title {
-    font-size: 1.1em;
+    font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px;
   }
 
   .prompt-description {
-    font-size: 0.9em;
-    margin-bottom: 10px;
+    font-size: 14px;
+    color: #a0aec0;
+    margin-bottom: 8px;
   }
 
   .category-tag {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #4a4a4a;
-    padding: 3px 8px;
+    font-size: 12px;
+    background-color: #4a5568;
+    color: white;
+    padding: 2px 6px;
     border-radius: 12px;
-    font-size: 0.8em;
   }
 
   .prompt-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 8px;
   }
 
   .action-button {
-    background-color: #3a3a3a;
-    color: white;
+    background-color: transparent;
+    color: #a0aec0;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 2px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: color 0.2s;
   }
 
   .action-button:hover {
-    background-color: #4a4a4a;
+    color: white;
   }
 
   .library-actions {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 16px;
   }
 
   .primary-button,
   .secondary-button {
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 4px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.2s;
   }
@@ -315,18 +318,19 @@
 
   .input-field {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 8px;
+    margin-bottom: 12px;
     background-color: #3a3a3a;
     border: 1px solid #4a4a4a;
     border-radius: 4px;
     color: white;
+    font-size: 14px;
   }
 
   .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 12px;
     margin-top: 20px;
   }
 
@@ -338,26 +342,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    padding: 4px 0;
   }
 
   .delete-button {
-    background-color: #e74c3c;
+    background-color: #e53e3e;
     color: white;
     border: none;
-    padding: 3px 8px;
+    padding: 2px 6px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+    font-size: 12px;
   }
 
   .delete-button:hover {
-    background-color: #c0392b;
+    background-color: #c53030;
   }
 
   .add-category {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 </style>
