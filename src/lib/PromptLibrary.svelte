@@ -101,13 +101,7 @@
 <div class="prompt-library h-full flex flex-col bg-secondary text-white/90">
   <div class="flex flex-col h-full">
     <div class="search-bar mb-4">
-      <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input">
-      <select bind:value={selectedCategory} class="category-select">
-        <option value="">No category selected</option>
-        {#each $categories as category}
-          <option value={category}>{category}</option>
-        {/each}
-      </select>
+      <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input mb-2">
     </div>
 
     <div class="prompts-list flex-grow overflow-y-auto">
@@ -128,6 +122,15 @@
           <span class="category-tag">{prompt.category || 'No category'}</span>
         </div>
       {/each}
+    </div>
+
+    <div class="category-select-container mt-4">
+      <select bind:value={selectedCategory} class="category-select w-full">
+        <option value="">No category selected</option>
+        {#each $categories as category}
+          <option value={category}>{category}</option>
+        {/each}
+      </select>
     </div>
 
     <div class="library-actions mt-4">
