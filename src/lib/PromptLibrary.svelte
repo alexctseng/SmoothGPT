@@ -15,8 +15,30 @@
   type Category = string;
 
   // Reactive variables
-  let prompts = writable<Prompt[]>([]);
-  let categories = writable<Category[]>([]);
+  let prompts = writable<Prompt[]>([
+    {
+      id: '1',
+      title: 'CaseBrief+',
+      description: 'Generate a comprehensive case brief',
+      text: 'Please provide a detailed case brief for the following legal case:',
+      category: 'Legal'
+    },
+    {
+      id: '2',
+      title: 'Hallucination+',
+      description: 'Explore creative and imaginative scenarios',
+      text: 'Describe a vivid and fantastical scenario where:',
+      category: 'Creative'
+    },
+    {
+      id: '3',
+      title: 'Research+',
+      description: 'Conduct in-depth research on a topic',
+      text: 'Provide a comprehensive research summary on the following topic:',
+      category: 'Academic'
+    }
+  ]);
+  let categories = writable<Category[]>(['Legal', 'Creative', 'Academic']);
   let searchQuery = '';
   let selectedCategory = '';
   let isCreatingPrompt = false;
@@ -104,6 +126,15 @@
       <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input mb-2">
     </div>
 
+    <div class="category-select-container mb-4">
+      <select bind:value={selectedCategory} class="category-select w-full">
+        <option value="">No category selected</option>
+        {#each $categories as category}
+          <option value={category}>{category}</option>
+        {/each}
+      </select>
+    </div>
+
     <div class="prompts-list flex-grow overflow-y-auto">
       {#each filteredPrompts as prompt (prompt.id)}
         <div class="prompt-item">
@@ -122,15 +153,6 @@
           <span class="category-tag">{prompt.category || 'No category'}</span>
         </div>
       {/each}
-    </div>
-
-    <div class="category-select-container mt-4">
-      <select bind:value={selectedCategory} class="category-select w-full">
-        <option value="">No category selected</option>
-        {#each $categories as category}
-          <option value={category}>{category}</option>
-        {/each}
-      </select>
     </div>
 
     <div class="library-actions mt-4">
@@ -188,6 +210,7 @@
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    width: 280px;
   }
 
   .search-bar {
@@ -214,10 +237,15 @@
   }
 
   .prompt-item {
-    background-color: #2c2c2c;
+    background-color: #3a3a3a;
     border-radius: 6px;
     padding: 12px;
     position: relative;
+    transition: background-color 0.2s;
+  }
+
+  .prompt-item:hover {
+    background-color: #4a4a4a;
   }
 
   .prompt-header {
@@ -230,6 +258,7 @@
   .prompt-title {
     font-size: 16px;
     font-weight: bold;
+    color: #e2e8f0;
   }
 
   .prompt-description {
