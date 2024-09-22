@@ -239,15 +239,15 @@ SmoothGPT
 <Help />
 {/if}
 
-<main class="bg-primary overflow-hidden flex">
+<main class="bg-primary overflow-hidden flex flex-col h-screen">
   <Sidebar on:new-chat={() => newChat()} />
-  <div class="flex-grow flex">
-    <div class="h-screen flex justify-stretch flex-col md:ml-[260px] bg-secondary text-white/80 height-manager flex-grow">
+  <div class="flex flex-grow overflow-hidden">
+    <div class="flex-grow flex flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
       
       <div class="flex flex-grow overflow-hidden">
-        <div class="flex-grow flex flex-col">
-          <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4" bind:this={chatContainer}>
+        <div class="flex-grow flex flex-col relative">
+          <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4 relative" bind:this={chatContainer}>
       {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
         <div class="flex flex-col max-w-4xl w-full pt-6 grow">
           
@@ -421,6 +421,23 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
     </div>
   </div>
 
+          </div>
+          
+          <div class="inputbox-container w-full flex justify-center items-center bg-primary">
+            <!-- Input box content -->
+          </div>
+        </div>
+        
+        <!-- Prompt Library sidebar -->
+        <div
+          class="h-full bg-secondary transition-all duration-300 ease-in-out overflow-hidden flex"
+          style="width: {isPromptLibraryVisible ? '300px' : '0px'};"
+        >
+          <PromptLibrary />
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <!-- Prompt Library toggle button -->
@@ -432,14 +449,6 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
   </svg>
 </button>
-
-<!-- Prompt Library sidebar -->
-<div
-  class="fixed top-0 right-0 h-full bg-primary shadow-lg transition-transform duration-300 ease-in-out z-40"
-  style="width: 300px; transform: translateX({isPromptLibraryVisible ? '0' : '100%'});"
->
-  <PromptLibrary />
-</div>
 
 <style>
   @import './styles/styles.css';
