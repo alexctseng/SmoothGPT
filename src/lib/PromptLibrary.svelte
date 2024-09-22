@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  import { menuVisible } from '../stores/stores';
 
   // Define types
   type Prompt = {
@@ -97,8 +98,14 @@
   }
 </script>
 
-<div class="prompt-library h-full flex flex-col">
-  <h2 class="text-xl font-bold mb-4">Prompt Library</h2>
+<div class="prompt-library h-full flex flex-col bg-secondary text-white/90">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold">Prompt Library</h2>
+    <button on:click={() => menuVisible.set(false)} class="text-sm text-gray-400 hover:text-white">Close</button>
+  </div>
+  <p class="text-xs text-gray-400 mb-4">
+    For information on responsible AI use, visit <a href="https://www.pleasedontshareanyprivilegedinformation.com/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">our guidelines</a>.
+  </p>
   
   <div class="search-bar mb-4">
     <input type="text" bind:value={searchQuery} placeholder="Search Prompt Library..." class="search-input">
@@ -175,8 +182,6 @@
 <style>
   .prompt-library {
     padding: 20px;
-    background-color: #1a1a1a;
-    color: white;
     height: 100%;
     overflow-y: auto;
   }
