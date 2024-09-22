@@ -421,39 +421,24 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
     </div>
   </div>
 
-  <!-- Position the PromptLibrary component -->
-  <div
-    class="h-full bg-primary transition-all duration-300 ease-in-out"
-    style="width: {isPromptLibraryVisible ? '300px' : '0px'}; overflow: {isPromptLibraryVisible ? 'auto' : 'hidden'};"
-  >
-    <PromptLibrary />
-  </div>
 </main>
 
-<!-- Prompt Library container -->
-<div class="prompt-library-container fixed top-0 right-0 h-screen flex items-start z-50 transition-all duration-300 ease-in-out"
-     style="transform: translateX({isPromptLibraryVisible ? '0' : 'calc(100% - 40px)'});">
-  <!-- Toggle button -->
-  <button
-    class="bg-primary text-white p-2 rounded-l-lg flex items-center justify-center prompt-library-toggle"
-    on:click={togglePromptLibrary}
-    style="width: 40px; height: 40px;"
-  >
-    <img
-      src="/src/assets/PromptLibrary.svg"
-      alt="Toggle Prompt Library"
-      class="w-6 h-6"
-      style="transform: {isPromptLibraryVisible ? 'rotate(180deg)' : 'rotate(0deg)'};"
-    />
-  </button>
+<!-- Prompt Library toggle button -->
+<button
+  class="fixed top-4 right-4 bg-primary text-white p-2 rounded-full flex items-center justify-center z-50 shadow-lg hover:bg-hover transition-colors duration-200"
+  on:click={togglePromptLibrary}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+</button>
 
-  <!-- Prompt Library content -->
-  <div
-    class="h-full bg-primary overflow-y-auto prompt-library-content"
-    style="width: 300px; display: {isPromptLibraryVisible ? 'block' : 'none'};"
-  >
-    <PromptLibrary />
-  </div>
+<!-- Prompt Library sidebar -->
+<div
+  class="fixed top-0 right-0 h-full bg-primary shadow-lg transition-transform duration-300 ease-in-out z-40"
+  style="width: 300px; transform: translateX({isPromptLibraryVisible ? '0' : '100%'});"
+>
+  <PromptLibrary />
 </div>
 
 <style>
@@ -467,26 +452,5 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
   :global(.inputbox-container) {
     margin-top: auto;
-  }
-
-  .prompt-library-container {
-    width: 340px;
-  }
-
-  .prompt-library-toggle {
-    transition: background-color 0.3s ease;
-    z-index: 60;
-  }
-
-  .prompt-library-toggle:hover {
-    background-color: #2c2c2c;
-  }
-
-  .prompt-library-toggle img {
-    transition: transform 0.3s ease;
-  }
-
-  .prompt-library-content {
-    transition: all 0.3s ease-in-out;
   }
 </style>
