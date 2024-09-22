@@ -155,9 +155,11 @@
       {/each}
     </div>
 
-    <div class="library-actions mt-4">
-      <button on:click={() => isCreatingPrompt = true} class="primary-button">+ Create</button>
-      <button on:click={() => isManagingCategories = true} class="secondary-button">Manage</button>
+    <div class="border-t border-gray-600 mt-4 pt-4">
+      <div class="library-actions">
+        <button on:click={() => isCreatingPrompt = true} class="primary-button">+ Create</button>
+        <button on:click={() => isManagingCategories = true} class="secondary-button">Manage</button>
+      </div>
     </div>
   </div>
 
