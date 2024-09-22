@@ -437,7 +437,6 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
         </div>
       </div>
     </div>
-  </div>
 </main>
 
 <!-- Prompt Library toggle button -->
