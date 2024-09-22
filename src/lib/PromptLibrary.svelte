@@ -2,6 +2,9 @@
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import { menuVisible } from '../stores/stores';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   // Define types
   type Prompt = {
@@ -105,6 +108,10 @@
     };
   }
 
+  function usePrompt(promptText: string) {
+    dispatch('use-prompt', { text: promptText });
+  }
+
   function addCategory(category: string) {
     if (category.trim()) {
       categories.update(c => [...c, category.trim()]);
@@ -137,21 +144,21 @@
 
     <div class="prompts-list flex-grow overflow-y-auto">
       {#each filteredPrompts as prompt (prompt.id)}
-        <div class="prompt-item">
+        <button class="prompt-item w-full text-left" on:click={() => usePrompt(prompt.text)}>
           <div class="prompt-header">
             <h3 class="prompt-title">{prompt.title}</h3>
             <div class="prompt-actions">
-              <button on:click={() => editPrompt(prompt)} class="action-button edit-button">
+              <button on:click|stopPropagation={() => editPrompt(prompt)} class="action-button edit-button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
               </button>
-              <button on:click={() => deletePrompt(prompt.id)} class="action-button delete-button">
+              <button on:click|stopPropagation={() => deletePrompt(prompt.id)} class="action-button delete-button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
               </button>
             </div>
           </div>
           <p class="prompt-description">{prompt.description}</p>
           <span class="category-tag">{prompt.category || 'No category'}</span>
-        </div>
+        </button>
       {/each}
     </div>
 

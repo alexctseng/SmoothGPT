@@ -9,6 +9,7 @@
   import PromptLibrary from "./lib/PromptLibrary.svelte";
   import SvelteMarkdown from "svelte-markdown";
   import CodeRenderer from "./renderers/Code.svelte";
+  import { onMount } from 'svelte';
   import UserCodeRenderer from "./renderers/userCode.svelte";
   import EmRenderer from "./renderers/Em.svelte";
   import ListRenderer from "./renderers/ListRenderer.svelte";
@@ -224,6 +225,17 @@ function startEditMessage(i: number) {
     isPromptLibraryVisible = !isPromptLibraryVisible;
   }
 
+  function handleUsePrompt(event) {
+    input = event.detail.text;
+    isPromptLibraryVisible = false;
+  }
+
+  onMount(() => {
+    if (textAreaElement) {
+      textAreaElement.style.color = 'black';
+    }
+  });
+
 </script>
 <title>
   {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
@@ -394,7 +406,7 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
 
       <div class="input-area flex items-center bg-chat rounded-xl p-4 shadow-lg w-full">
         <textarea bind:this={textAreaElement}  
-          class="w-full min-h-[56px] max-h-[200px] rounded-xl p-4 mr-4 bg-primary text-white resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 text-lg"   
+          class="w-full min-h-[56px] max-h-[200px] rounded-xl p-4 mr-4 bg-primary text-black resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 text-lg"   
           placeholder="Type your message..."   
           bind:value={input}   
           on:input={autoExpand}
@@ -433,7 +445,7 @@ on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-
           class="h-full bg-secondary transition-all duration-300 ease-in-out overflow-hidden flex"
           style="width: {isPromptLibraryVisible ? 'auto' : '0px'};"
         >
-          <PromptLibrary />
+          <PromptLibrary on:use-prompt={handleUsePrompt} />
         </div>
       </div>
 </main>
