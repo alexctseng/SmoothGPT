@@ -9,7 +9,6 @@
   import PromptLibrary from "./lib/PromptLibrary.svelte";
   import SvelteMarkdown from "svelte-markdown";
   import CodeRenderer from "./renderers/Code.svelte";
-  import { onMount } from 'svelte';
   import UserCodeRenderer from "./renderers/userCode.svelte";
   import EmRenderer from "./renderers/Em.svelte";
   import ListRenderer from "./renderers/ListRenderer.svelte";
