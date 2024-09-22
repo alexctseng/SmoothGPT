@@ -250,10 +250,22 @@ SmoothGPT
 <Help />
 {/if}
 
+<script lang="ts">
+  // ... (keep existing imports and script content)
+  import { onMount } from 'svelte';
+  import Sidebar from "./lib/Sidebar.svelte";
+
+  let isCollapsed = false;
+
+  function handleSidebarToggle(event) {
+    isCollapsed = event.detail.isCollapsed;
+  }
+</script>
+
 <main class="bg-primary overflow-hidden flex flex-col h-screen">
-  <Sidebar on:new-chat={() => newChat()} />
   <div class="flex flex-grow overflow-hidden">
-    <div class="flex-grow flex flex-col md:ml-[260px] bg-secondary text-white/80 height-manager">
+    <Sidebar on:new-chat={() => newChat()} on:toggle-sidebar={handleSidebarToggle} />
+    <div class="flex-grow flex flex-col bg-secondary text-white/80 height-manager transition-all duration-300" style="margin-left: {isCollapsed ? '60px' : '280px'};">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
       
       <div class="flex flex-grow overflow-hidden">
