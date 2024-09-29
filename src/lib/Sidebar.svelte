@@ -131,7 +131,7 @@
           Close menu
         </button>
         <button class="flex justify-between items-center py-3 px-3 cursor-pointer w-full text-left hover:bg-gray-700 rounded-lg z-20" on:click={newChat}>
-          <p class="text-center font-bold text-2xl m-0">Prompt Composer</p>
+          <p class="text-center font-bold text-2xl m-0 whitespace-nowrap">Prompt Composer</p>
           <img src={NewChat} alt="New chat" class="w-6 h-6 filter-white z-20">
         </button>
         
