@@ -262,7 +262,6 @@ SmoothGPT
     <Sidebar on:new-chat={() => newChat()} on:toggle-sidebar={handleSidebarToggle} />
     <div class="flex-grow flex flex-col bg-secondary text-white/80 height-manager transition-all duration-300" style="margin-left: {isCollapsed ? '60px' : '280px'};">
       <Topbar bind:conversation_title={conversationTitle} on:new-chat={newChat} />
-      
       <div class="flex flex-grow overflow-hidden">
         <div class="flex-grow flex flex-col relative">
           <div class="flex bg-primary overflow-y-auto overflow-x-hidden justify-center grow px-4 relative" bind:this={chatContainer}>
