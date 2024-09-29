@@ -392,20 +392,35 @@ SmoothGPT
 
 
 {:else if isGPTMode}
-<input type="file" id="pdfUpload" accept="application/pdf" 
-on:change="{event => uploadPDF(event)}" bind:this={pdfInputElement} class="file-input">
-
-<label for="pdfUpload" class="file-label bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">
-  {#if uploadedPDFCount === 0}
-    <img src={PDFIcon} alt="PDF" class="pdf-icon icon-white">
-  {:else}
-    <span class="fileCount">{uploadedPDFCount}</span>
+<div class="relative inline-block">
+  <button on:click={() => isFileMenuOpen = !isFileMenuOpen} 
+          class="bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">
+    {#if uploadedFileCount === 0}
+      <img src={PDFIcon} alt="Upload" class="pdf-icon icon-white">
+    {:else}
+      <span class="fileCount">{uploadedFileCount}</span>
+    {/if}
+  </button>
+  
+  {#if isFileMenuOpen}
+    <div class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+      <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <label for="pdfUpload" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+          PDF
+          <input type="file" id="pdfUpload" accept="application/pdf" on:change="{event => uploadFile(event, 'pdf')}" class="hidden">
+        </label>
+        <label for="spreadsheetUpload" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+          CSV/XLSX
+          <input type="file" id="spreadsheetUpload" accept=".csv,.xlsx" on:change="{event => uploadFile(event, 'spreadsheet')}" class="hidden">
+        </label>
+      </div>
+    </div>
   {/if}
-</label>
+</div>
 
-{#if uploadedPDFCount > 0}  
-      <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>  
-    {/if}  
+{#if uploadedFileCount > 0}  
+  <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>  
+{/if}  
 
       {/if}
 
