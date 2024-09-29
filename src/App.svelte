@@ -27,8 +27,8 @@
   import UploadIcon from "./assets/upload-icon.svg";
   import PDFIcon from "./assets/pdf-icon.svg";
   import { afterUpdate } from "svelte";
-  import { processPDF } from './managers/pdfManager';
-  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, clearPDFInputSignal } from "./stores/stores";
+  import { processPDF, processSpreadsheet } from './managers/pdfManager';
+  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal } from "./stores/stores";
   import { isAudioMessage, formatMessageForMarkdown } from "./utils/generalUtils";
   import { routeMessage, newChat, deleteMessageFromConversation } from "./managers/conversationManager";
   import { copyTextToClipboard } from './utils/generalUtils';
@@ -45,13 +45,12 @@
   }
 
   let fileInputElement; 
-  let pdfInputElement; 
   let input: string = "";
   let textAreaElement; 
   let editTextArea; 
 
-  let pdfFile;
-  let pdfOutput = '';
+  let uploadedFile;
+  let fileOutput = '';
 
   let chatContainer: HTMLElement;
   let moreButtonsToggle: boolean = false;
@@ -60,14 +59,11 @@
   let editingMessageId: number | null = null;
   let editingMessageContent: string = "";
 
+  let isFileMenuOpen = false;
+
   $: if ($clearFileInputSignal && fileInputElement) {
     fileInputElement.value = '';
     clearFileInputSignal.set(false); // Reset the signal
-  }
-
-  $: if ($clearPDFInputSignal && pdfInputElement) {
-    pdfInputElement.value = '';
-    clearPDFInputSignal.set(false); // Reset the signal
   }
 
   $: {
@@ -82,24 +78,27 @@
       console.log("changing conversation from ID", $chosenConversationId);
       chosenConversationId.set(totalConversations > 0 ? totalConversations - 1 : null);
       console.log("to ID", $chosenConversationId);
-
     }
   }
 
-  async function uploadPDF(event) {
-    pdfFile = event.target.files[0]; // Get the first file (assuming single file upload)
-    if (pdfFile) {
-        pdfOutput = await processPDF(pdfFile);
-        console.log(pdfOutput);
+  async function uploadFile(event, type) {
+    uploadedFile = event.target.files[0];
+    if (uploadedFile) {
+      if (type === 'pdf') {
+        fileOutput = await processPDF(uploadedFile);
+      } else if (type === 'spreadsheet') {
+        fileOutput = await processSpreadsheet(uploadedFile);
+      }
+      console.log(fileOutput);
     }
-}
+    isFileMenuOpen = false;
+  }
 
-function clearFiles() {  
-    base64Images.set([]); // Assuming this is a writable store tracking uploaded images  
-    pdfFile = null; // Clear the file variable  
-    pdfOutput = ''; // Reset the output  
-    pdfInputElement.value = '';
-
+  function clearFiles() {  
+    base64Images.set([]);
+    uploadedFile = null;
+    fileOutput = '';
+    fileInputElement.value = '';
   }  
   
   let chatContainerObserver: MutationObserver | null = null;  
