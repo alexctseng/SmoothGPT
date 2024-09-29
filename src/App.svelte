@@ -25,7 +25,7 @@
   import SendIcon from "./assets/send.svg";
   import WaitIcon from "./assets/wait.svg"; 
   import UploadIcon from "./assets/upload-icon.svg";
-  import PDFIcon from "./assets/pdf-icon.svg";
+  import PDFIcon from "./assets/pdf-icon.svg"; 
   import { afterUpdate } from "svelte";
   import { processPDF, processSpreadsheet } from './managers/pdfManager';
   import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal } from "./stores/stores";
@@ -260,19 +260,6 @@ SmoothGPT
   <div class="flex flex-grow overflow-hidden">
     <Sidebar on:new-chat={() => newChat()} on:toggle-sidebar={handleSidebarToggle} />
     <div class="flex-grow flex flex-col bg-secondary text-white/80 height-manager transition-all duration-300" style="margin-left: {isCollapsed ? '60px' : '280px'};">
-      <Topbar 
-        bind:conversation_title={conversationTitle} 
-        on:new-chat={newChat} 
-        on:update-title={(event) => {
-          let newTitle = event.detail;
-          conversations.update(convs => {
-            let updatedConvs = [...convs];
-            updatedConvs[$chosenConversationId].title = newTitle;
-            return updatedConvs;
-          });
-          conversationTitle = newTitle;
-        }}
-      />
       <Topbar 
         bind:conversation_title={conversationTitle} 
         on:new-chat={newChat} 
