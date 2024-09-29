@@ -39,6 +39,15 @@
     on:mouseenter={() => isTitleHovering = true}
     on:mouseleave={() => isTitleHovering = false}
     on:click={handleTitleClick}
+    on:keydown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleTitleClick();
+      }
+    }}
+    tabindex="0"
+    role="button"
+    aria-label="Edit conversation title"
   >
     <span class={isTitleHovering ? "underline" : ""}>
       {conversation_title === "" ? "New Conversation" : conversation_title}
