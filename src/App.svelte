@@ -37,6 +37,8 @@
   import { handleImageUpload, onSendVisionMessageComplete } from './managers/imageManager';
   import { base64Images } from './stores/stores';
   import { closeStream } from './services/openaiService';  
+  import OptimizeIcon from "./assets/Optimize.svg";
+  import MutateIcon from "./assets/Mutate.svg";
 
   let isCollapsed = false;
 
@@ -240,6 +242,15 @@ function startEditMessage(i: number) {
     }
   });
 
+  function handleOptimize() {
+    // Implement optimization functionality here
+    console.log("Optimize button clicked");
+  }
+
+  function handleMutate() {
+    // Implement mutation functionality here
+    console.log("Mutate button clicked");
+  }
 </script>
 <title>
   {#if $conversations.length > 0 && $conversations[$chosenConversationId]}
@@ -383,79 +394,95 @@ SmoothGPT
         {/if}
       </div>
 
-      <div class="inputbox-container w-full flex justify-center items-center bg-primary">
+      <div class="flex flex-col items-center justify-end bg-primary pt-4 pb-6">
+        <!-- New buttons above the chat input box, centered -->
+        <div class="flex justify-center space-x-4 mb-4">
+          <button
+            class="p-2 rounded-full bg-green-500 hover:bg-green-600 transition duration-200"
+            on:click={handleMutate}
+            aria-label="Mutate Prompt"
+            title="Mutate Prompt"
+          >
+            <img src={MutateIcon} alt="Mutate" class="w-5 h-5" />
+          </button>
+          <button
+            class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition duration-200"
+            on:click={handleOptimize}
+            aria-label="Optimize Prompt"
+            title="Optimize Prompt"
+          >
+            <img src={OptimizeIcon} alt="Optimize" class="w-5 h-5" />
+          </button>
+        </div>
 
-    <div class="inputbox flex flex-1 bg-primary mt-auto mx-auto max-w-5xl mb-6">
-      {#if isVisionMode}  
-      <input type="file" id="imageUpload" multiple accept="image/*" on:change="{handleImageUpload}" bind:this={fileInputElement} class="file-input">  
-      <label for="imageUpload" class="file-label bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">  
-        {#if uploadedFileCount > 0}  
-          <span class="fileCount">{uploadedFileCount}</span>  
-        {:else}  
-          <img src={UploadIcon} alt="Upload" class="upload-icon icon-white">  
-        {/if} 
-      </label>  
+        <!-- Chat input box -->
+        <div class="inputbox-container w-full flex justify-center items-center">
+          <div class="inputbox flex flex-1 bg-primary mx-auto max-w-5xl">
+            {#if isVisionMode}  
+            <input type="file" id="imageUpload" multiple accept="image/*" on:change="{handleImageUpload}" bind:this={fileInputElement} class="file-input">  
+            <label for="imageUpload" class="file-label bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">  
+              {#if uploadedFileCount > 0}  
+                <span class="fileCount">{uploadedFileCount}</span>  
+              {:else}  
+                <img src={UploadIcon} alt="Upload" class="upload-icon icon-white">  
+              {/if} 
+            </label>  
 
-      {#if uploadedFileCount > 0}  
-      <button on:click={clearFiles} class="clear-btn">X</button>  
-    {/if}  
+            {#if uploadedFileCount > 0}  
+            <button on:click={clearFiles} class="clear-btn">X</button>  
+          {/if}  
 
 
-{:else if isGPTMode}
-<div class="flex items-center">
-  <label for="pdfUpload" class="bg-chat rounded-full p-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors flex items-center justify-center">
-    <img src={PDFIcon} alt="Upload" class="pdf-icon icon-white w-8 h-8 my-auto">
-    {#if uploadedFileCount > 0}
-      <span class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white font-bold px-2 py-1 rounded-full text-xs fileCount">
-        {uploadedFileCount}
-      </span>
-    {/if}
-    <input type="file" id="pdfUpload" accept="application/pdf,.csv,.xlsx" on:change="{event => uploadFile(event)}" class="hidden">
-  </label>
-</div>
+      {:else if isGPTMode}
+      <div class="flex items-center">
+        <label for="pdfUpload" class="bg-chat rounded-full p-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors flex items-center justify-center">
+          <img src={PDFIcon} alt="Upload" class="pdf-icon icon-white w-8 h-8 my-auto">
+          {#if uploadedFileCount > 0}
+            <span class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white font-bold px-2 py-1 rounded-full text-xs fileCount">
+              {uploadedFileCount}
+            </span>
+          {/if}
+          <input type="file" id="pdfUpload" accept="application/pdf,.csv,.xlsx" on:change="{event => uploadFile(event)}" class="hidden">
+        </label>
+      </div>
 
-{#if uploadedFileCount > 0}
-  <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>
-{/if}
-
+      {#if uploadedFileCount > 0}
+        <button on:click={clearFiles} class="clear-btn px-4 rounded-lg bg-red-700 mx-2 hover:bg-red-500">X</button>
       {/if}
 
-      <div class="input-area flex items-center bg-chat rounded-xl p-4 shadow-lg w-full">
-        <textarea bind:this={textAreaElement}  
-          class="w-full min-h-[56px] max-h-[200px] rounded-xl p-4 mr-4 bg-primary text-black resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 text-lg"   
-          placeholder="Type your message..."   
-          bind:value={input}   
-          on:input={autoExpand}
-          on:keydown={(event) => {  
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
-            if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
-              event.preventDefault();
-              processMessage();  
-            }  
-          }}  
-        ></textarea>  
-        <button class="bg-accent hover:bg-blue-600 rounded-full p-4 cursor-pointer transition-all duration-200 transform hover:scale-105 flex-shrink-0" 
-                on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} 
-                disabled={!$isStreaming && !input.trim().length}>    
-          {#if $isStreaming}    
-            <img class="icon-white w-7 h-7 animate-spin" alt="Wait" src={WaitIcon} />    
-          {:else}    
-            <img class="icon-white w-7 h-7" alt="Send" src={SendIcon} />    
-          {/if}    
-        </button>  
+            {/if}
+
+            <div class="input-area flex items-center bg-chat rounded-xl p-4 shadow-lg w-full">
+              <textarea bind:this={textAreaElement}  
+                class="w-full min-h-[56px] max-h-[200px] rounded-xl p-4 mr-4 bg-primary text-black resize-none focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 text-lg"   
+                placeholder="Type your message..."   
+                bind:value={input}   
+                on:input={autoExpand}
+                on:keydown={(event) => {  
+                  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);  
+                  if (!$isStreaming && event.key === "Enter" && !event.shiftKey && !event.ctrlKey && !event.metaKey && !isMobile) {  
+                    event.preventDefault();
+                    processMessage();  
+                  }  
+                }}  
+              ></textarea>  
+              <button class="bg-accent hover:bg-blue-600 rounded-full p-4 cursor-pointer transition-all duration-200 transform hover:scale-105 flex-shrink-0" 
+                      on:click={() => { if ($isStreaming) { closeStream(); } else { processMessage(); } }} 
+                      disabled={!$isStreaming && !input.trim().length}>    
+                {#if $isStreaming}    
+                  <img class="icon-white w-7 h-7 animate-spin" alt="Wait" src={WaitIcon} />    
+                {:else}    
+                  <img class="icon-white w-7 h-7" alt="Send" src={SendIcon} />    
+                {/if}    
+              </button>  
+            </div>
+           
+          </div>
+        </div>
       </div>
-     
-      </div>
-    </div>
-  </div>
 
           </div>
           
-          <div class="inputbox-container w-full flex justify-center items-center bg-primary">
-            <!-- Input box content -->
-          </div>
-        </div>
-        
         <!-- Prompt Library sidebar -->
         <div
           class="h-full bg-secondary transition-all duration-300 ease-in-out overflow-hidden flex"
@@ -487,5 +514,20 @@ SmoothGPT
 
   :global(.inputbox-container) {
     margin-top: auto;
+  }
+
+  /* Add styles for button tooltips */
+  button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
   }
 </style>

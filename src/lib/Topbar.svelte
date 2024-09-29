@@ -20,6 +20,13 @@
   function handleTitleClick() {
     isEditing = true;
     editableTitle = conversation_title;
+    // Use this to focus the input after the component updates
+    setTimeout(() => {
+      const inputElement = document.querySelector('input[type="text"]');
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }, 0);
   }
 
   function handleTitleBlur() {
@@ -33,6 +40,12 @@
     if (event.key === 'Enter') {
       event.preventDefault();
       handleTitleBlur();
+    }
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleTitleClick();
     }
   }
 </script>
@@ -56,6 +69,7 @@
     on:mouseenter={() => isTitleHovering = true}
     on:mouseleave={() => isTitleHovering = false}
     on:click={handleTitleClick}
+    on:keydown={handleKeydown}
     tabindex="0"
     role="button"
     aria-label="Edit conversation title"
@@ -67,7 +81,6 @@
         on:blur={handleTitleBlur}
         on:keydown={handleTitleKeydown}
         class="bg-transparent text-center w-full outline-none border-b border-white/50"
-        autofocus
       />
     {:else}
       <span class="transition-all duration-200" class:underline={isTitleHovering}>
