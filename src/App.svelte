@@ -159,7 +159,7 @@ function autoExpand(event) {
 
   function processMessage() {
     let convId = $chosenConversationId;
-    routeMessage(input, convId, pdfOutput);
+    routeMessage(input, convId, fileOutput);
     input = ""; 
     clearFiles ();
     textAreaElement.style.height = '96px'; // Reset the height after sending
@@ -404,11 +404,11 @@ SmoothGPT
   {#if isFileMenuOpen}
     <div class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
       <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-        <label for="pdfUpload" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+        <label for="pdfUpload" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
           PDF
           <input type="file" id="pdfUpload" accept="application/pdf" on:change="{event => uploadFile(event, 'pdf')}" class="hidden">
         </label>
-        <label for="spreadsheetUpload" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+        <label for="spreadsheetUpload" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900">
           CSV/XLSX
           <input type="file" id="spreadsheetUpload" accept=".csv,.xlsx" on:change="{event => uploadFile(event, 'spreadsheet')}" class="hidden">
         </label>
