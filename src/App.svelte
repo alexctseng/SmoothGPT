@@ -81,15 +81,18 @@
     }
   }
 
-  async function uploadFile(event) {
-    uploadedFile = event.target.files[0];
-    if (uploadedFile) {
-      if (uploadedFile.type === 'application/pdf') {
-        fileOutput = await processPDF(uploadedFile);
-      } else if (uploadedFile.type === 'text/csv' || uploadedFile.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        fileOutput = await processSpreadsheet(uploadedFile);
+  async function uploadFile(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      uploadedFile = target.files[0];
+      if (uploadedFile) {
+        if (uploadedFile.type === 'application/pdf') {
+          fileOutput = await processPDF(uploadedFile);
+        } else if (uploadedFile.type === 'text/csv' || uploadedFile.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+          fileOutput = await processSpreadsheet(uploadedFile);
+        }
+        console.log(fileOutput);
       }
-      console.log(fileOutput);
     }
   }
 
@@ -396,7 +399,7 @@ SmoothGPT
         {uploadedFileCount}
       </span>
     {/if}
-    <input type="file" id="pdfUpload" accept="application/pdf,.csv,.xlsx" on:change="{event => uploadFile(event, event.target.files[0].type === 'application/pdf' ? 'pdf' : 'spreadsheet')}" class="hidden">
+    <input type="file" id="pdfUpload" accept="application/pdf,.csv,.xlsx" on:change="{event => uploadFile(event)}" class="hidden">
   </label>
 </div>
 
