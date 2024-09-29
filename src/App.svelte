@@ -391,9 +391,9 @@ SmoothGPT
 {:else if isGPTMode}
 <div class="relative inline-block">
   <button on:click={() => isFileMenuOpen = !isFileMenuOpen} 
-          class="bg-chat rounded py-2 px-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors">
+          class="bg-chat rounded-full p-4 mx-1 cursor-pointer hover:bg-hover2 transition-colors flex items-center justify-center">
     {#if uploadedFileCount === 0}
-      <img src={PDFIcon} alt="Upload" class="pdf-icon icon-white">
+      <img src={PDFIcon} alt="Upload" class="pdf-icon icon-white w-7 h-7">
     {:else}
       <span class="fileCount">{uploadedFileCount}</span>
     {/if}
