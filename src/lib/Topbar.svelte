@@ -2,12 +2,14 @@
   import { createEventDispatcher } from "svelte";
   import { menuVisible } from "../stores/stores";
   import MenuIcon from "../assets/menu.svg";
-  import addIcon from "../assets/add.svg";
+  // Remove this line:
+  // import addIcon from "../assets/add.svg";
   import EditIcon from "../assets/edit.svg";
   const dispatch = createEventDispatcher();
-  function newChat() {
-    dispatch("new-chat");
-  }
+  // Remove this function:
+  // function newChat() {
+  //   dispatch("new-chat");
+  // }
   export let conversation_title: string;
 
   let isHovering = false;
@@ -77,9 +79,11 @@
     {/if}
   </div>
   
+  <!-- Remove this button:
   <button on:click={newChat} class="text-lg font-medium">
     <img class="icon-white w-8" alt="+" src={addIcon} />
   </button>
+  -->
 </div>
 
 <style>

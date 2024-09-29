@@ -30,7 +30,7 @@
   import { processPDF, processSpreadsheet } from './managers/pdfManager';
   import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal } from "./stores/stores";
   import { isAudioMessage, formatMessageForMarkdown } from "./utils/generalUtils";
-  import { routeMessage, newChat, deleteMessageFromConversation } from "./managers/conversationManager";
+  import { routeMessage, deleteMessageFromConversation } from "./managers/conversationManager";
   import { copyTextToClipboard } from './utils/generalUtils';
   import { selectedModel, selectedVoice, selectedMode, isStreaming } from './stores/stores';
   import { reloadConfig } from './services/openaiService';
@@ -258,11 +258,10 @@ SmoothGPT
 
 <main class="bg-primary overflow-hidden flex flex-col h-screen">
   <div class="flex flex-grow overflow-hidden">
-    <Sidebar on:new-chat={() => newChat()} on:toggle-sidebar={handleSidebarToggle} />
+    <Sidebar on:toggle-sidebar={handleSidebarToggle} />
     <div class="flex-grow flex flex-col bg-secondary text-white/80 height-manager transition-all duration-300" style="margin-left: {isCollapsed ? '60px' : '280px'};">
       <Topbar 
         bind:conversation_title={conversationTitle} 
-        on:new-chat={newChat} 
         on:update-title={(event) => {
           let newTitle = event.detail;
           conversations.update(convs => {
