@@ -81,17 +81,16 @@
     }
   }
 
-  async function uploadFile(event, type) {
+  async function uploadFile(event) {
     uploadedFile = event.target.files[0];
     if (uploadedFile) {
-      if (type === 'pdf') {
+      if (uploadedFile.type === 'application/pdf') {
         fileOutput = await processPDF(uploadedFile);
-      } else if (type === 'spreadsheet') {
+      } else if (uploadedFile.type === 'text/csv' || uploadedFile.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
         fileOutput = await processSpreadsheet(uploadedFile);
       }
       console.log(fileOutput);
     }
-    isFileMenuOpen = false;
   }
 
   function clearFiles() {  
