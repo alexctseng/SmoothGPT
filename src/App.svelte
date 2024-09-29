@@ -187,9 +187,7 @@ let uploadedFileCount: number = 0;
 $: uploadedFileCount = $base64Images.length;
 
 let uploadedPDFCount: number = 0; 
-$: if (pdfOutput) {
-  uploadedPDFCount = 1; } else { uploadedPDFCount = 0; 
-} 
+$: uploadedPDFCount = fileOutput ? 1 : 0;
 
 function startEditMessage(i: number) {
     editingMessageId = i;
@@ -212,7 +210,7 @@ function startEditMessage(i: number) {
     }
     // Process the edited message as new input
     let convId = $chosenConversationId;
-    routeMessage(editedContent, convId, pdfOutput);
+    routeMessage(editedContent, convId, fileOutput);
     cancelEdit(); // Reset editing state
   }
 
