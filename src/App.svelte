@@ -3,7 +3,6 @@
   import { initApp, cleanupApp } from './appInit';
   import AudioPlayer from './lib/AudioPlayer.svelte';
   import Topbar from "./lib/Topbar.svelte";
-  import Topbar from "./lib/Topbar.svelte";
   import Sidebar from "./lib/Sidebar.svelte";
   import Settings from "./lib/Settings.svelte";
   import Help from "./lib/Help.svelte";
