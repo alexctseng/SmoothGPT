@@ -12,17 +12,31 @@
 
   let isHovering = false;
   let isTitleHovering = false;
+  let isEditing = false;
+  let editableTitle = "";
 
   function handleTitleClick() {
-    const newTitle = prompt("Enter a new title for the conversation:", conversation_title);
-    if (newTitle !== null && newTitle.trim() !== "") {
-      dispatch("update-title", newTitle.trim());
+    isEditing = true;
+    editableTitle = conversation_title;
+  }
+
+  function handleTitleBlur() {
+    if (editableTitle.trim() !== "") {
+      dispatch("update-title", editableTitle.trim());
+    }
+    isEditing = false;
+  }
+
+  function handleTitleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleTitleBlur();
     }
   }
 </script>
 
 <div
-  class="bg-secondary text-white/90 py-2 px-4 flex justify-between md:hidden shrink grow-0 max-h-16"
+  class="bg-secondary text-white/90 py-2 px-4 flex justify-between items-center md:hidden shrink grow-0 max-h-16 hover:bg-hover2 transition-colors duration-200"
   on:mouseenter={() => isHovering = true}
   on:mouseleave={() => isHovering = false}
 >
@@ -35,24 +49,29 @@
     <img class="icon-white w-8" alt="Menu" src={MenuIcon} />
   </button>
   <div 
-    class="text-lg font-medium pt-[3px] text-center overflow-hidden h-8 flex items-center justify-center cursor-pointer"
+    class="flex-grow text-lg font-medium text-center overflow-hidden h-8 flex items-center justify-center"
     on:mouseenter={() => isTitleHovering = true}
     on:mouseleave={() => isTitleHovering = false}
     on:click={handleTitleClick}
-    on:keydown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleTitleClick();
-      }
-    }}
     tabindex="0"
     role="button"
     aria-label="Edit conversation title"
   >
-    <span class={isTitleHovering ? "underline" : ""}>
-      {conversation_title === "" ? "New Conversation" : conversation_title}
-    </span>
-    {#if isHovering}
+    {#if isEditing}
+      <input
+        type="text"
+        bind:value={editableTitle}
+        on:blur={handleTitleBlur}
+        on:keydown={handleTitleKeydown}
+        class="bg-transparent text-center w-full outline-none border-b border-white/50"
+        autofocus
+      />
+    {:else}
+      <span class={isTitleHovering ? "underline text-white cursor-text" : "text-white/90"}>
+        {conversation_title === "" ? "New Conversation" : conversation_title}
+      </span>
+    {/if}
+    {#if isHovering && !isEditing}
       <img class="icon-white w-4 h-4 ml-2" alt="Edit" src={EditIcon} />
     {/if}
   </div>
@@ -62,7 +81,5 @@
 </div>
 
 <style>
-  .cursor-pointer {
-    cursor: text;
-  }
+  /* Add any additional styles here if needed */
 </style>
