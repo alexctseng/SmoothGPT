@@ -43,12 +43,12 @@
       type="text"
       bind:value={newTemplateName}
       placeholder="Template Name"
-      class="w-full p-2 mb-2 bg-primary text-white rounded"
+      class="w-full p-2 mb-2 bg-primary text-black rounded"
     />
     <textarea
       bind:value={newTemplateContent}
       placeholder="Template Content (Use ::VARIABLE:: for placeholders)"
-      class="w-full p-2 mb-2 bg-primary text-white rounded h-32"
+      class="w-full p-2 mb-2 bg-primary text-black rounded h-32"
     ></textarea>
     <button
       on:click={addTemplate}
