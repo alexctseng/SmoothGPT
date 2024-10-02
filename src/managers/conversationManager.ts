@@ -81,7 +81,6 @@ export function cleanseMessage(msg: ChatCompletionRequestMessage | { role: strin
 
 
 export async function routeMessage(input: string, convId, pdfOutput) {
-
     let currentHistory = get(conversations)[convId].history;
     let messageHistory = currentHistory;
     currentHistory = [...currentHistory, { role: "user", content: input }];
@@ -97,17 +96,28 @@ export async function routeMessage(input: string, convId, pdfOutput) {
     outgoingMessage = [
         ...messageHistory,
         { role: "user", content: input },
-      ];
+    ];
+
+    // Process variable prompt if it exists
+    const currentVariablePrompt = get(currentVariablePrompt);
+    if (currentVariablePrompt) {
+        const variableValues = get(variableValues);
+        let processedPrompt = currentVariablePrompt.template;
+        Object.entries(variableValues).forEach(([key, value]) => {
+            processedPrompt = processedPrompt.replace(new RegExp(`::${key}::`, 'g'), value);
+        });
+        outgoingMessage[outgoingMessage.length - 1].content = processedPrompt;
+    }
 
     if (model.includes('tts')) {
         // The model string contains 'tts', proceed with TTS message handling
         await sendTTSMessage(input, model, voice, convId);
-      } else if (model.includes('vision')) {
+    } else if (model.includes('vision')) {
         const imagesBase64 = get(base64Images); // Retrieve the current array of base64 encoded images
         await sendVisionMessage(outgoingMessage, imagesBase64, convId);
-      } else if (model.includes('dall-e')) {
+    } else if (model.includes('dall-e')) {
         await sendDalleMessage(outgoingMessage, convId);
-      } else if (pdfOutput) {
+    } else if (pdfOutput) {
         await sendPDFMessage(outgoingMessage, convId, pdfOutput);
     } else {
         // Default case for regular messages if no specific keywords are found in the model string

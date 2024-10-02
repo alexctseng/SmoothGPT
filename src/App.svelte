@@ -7,6 +7,7 @@
   import Settings from "./lib/Settings.svelte";
   import Help from "./lib/Help.svelte";
   import PromptLibrary from "./lib/PromptLibrary.svelte";
+  import VariablePromptEditor from "./lib/VariablePromptEditor.svelte";
   import SvelteMarkdown from "svelte-markdown";
   import CodeRenderer from "./renderers/Code.svelte";
   import UserCodeRenderer from "./renderers/userCode.svelte";
@@ -28,7 +29,7 @@
   import PDFIcon from "./assets/pdf-icon.svg"; 
   import { afterUpdate } from "svelte";
   import { processPDF, processSpreadsheet } from './managers/pdfManager';
-  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal } from "./stores/stores";
+  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, currentVariablePrompt, variableValues } from "./stores/stores";
   import { isAudioMessage, formatMessageForMarkdown } from "./utils/generalUtils";
   import { routeMessage, deleteMessageFromConversation } from "./managers/conversationManager";
   import { copyTextToClipboard } from './utils/generalUtils';
@@ -226,14 +227,45 @@ function startEditMessage(i: number) {
   }
 
   let isPromptLibraryVisible = false;
+  let isVariablePromptEditorVisible = false;
 
   function togglePromptLibrary() {
     isPromptLibraryVisible = !isPromptLibraryVisible;
+    if (isPromptLibraryVisible) {
+      isVariablePromptEditorVisible = false;
+    }
+  }
+
+  function toggleVariablePromptEditor() {
+    isVariablePromptEditorVisible = !isVariablePromptEditorVisible;
+    if (isVariablePromptEditorVisible) {
+      isPromptLibraryVisible = false;
+    }
   }
 
   function handleUsePrompt(event) {
     input = event.detail.text;
-    // Removed the line that closes the Prompt Library
+  }
+
+  function handleUseVariablePrompt(event) {
+    const { template, variables } = event.detail;
+    $currentVariablePrompt = { id: '', name: '', template, variables };
+    $variableValues = {};
+    variables.forEach(variable => {
+      $variableValues[variable] = '';
+    });
+  }
+
+  function processVariablePrompt() {
+    if ($currentVariablePrompt) {
+      let processedPrompt = $currentVariablePrompt.template;
+      Object.entries($variableValues).forEach(([key, value]) => {
+        processedPrompt = processedPrompt.replace(new RegExp(`::${key}::`, 'g'), value);
+      });
+      input = processedPrompt;
+      $currentVariablePrompt = null;
+      $variableValues = {};
+    }
   }
 
   onMount(() => {
@@ -490,18 +522,51 @@ SmoothGPT
         >
           <PromptLibrary on:use-prompt={handleUsePrompt} />
         </div>
+        
+        <!-- Variable Prompt Editor sidebar -->
+        <div
+          class="h-full bg-secondary transition-all duration-300 ease-in-out overflow-hidden flex"
+          style="width: {isVariablePromptEditorVisible ? 'auto' : '0px'};"
+        >
+          <VariablePromptEditor on:use-variable-prompt={handleUseVariablePrompt} />
+        </div>
       </div>
 </main>
 
 <!-- Prompt Library toggle button -->
 <button
-  class="fixed top-4 {isPromptLibraryVisible ? 'right-[300px]' : 'right-4'} bg-primary text-white p-2 rounded-full flex items-center justify-center z-50 shadow-lg hover:bg-hover transition-colors duration-200"
+  class="fixed top-4 {isPromptLibraryVisible || isVariablePromptEditorVisible ? 'right-[300px]' : 'right-4'} bg-primary text-white p-2 rounded-full flex items-center justify-center z-50 shadow-lg hover:bg-hover transition-colors duration-200"
   on:click={togglePromptLibrary}
 >
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
   </svg>
 </button>
+
+<!-- Variable Prompt Editor toggle button -->
+<button
+  class="fixed top-20 {isPromptLibraryVisible || isVariablePromptEditorVisible ? 'right-[300px]' : 'right-4'} bg-primary text-white p-2 rounded-full flex items-center justify-center z-50 shadow-lg hover:bg-hover transition-colors duration-200"
+  on:click={toggleVariablePromptEditor}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+    <path d="M4 21v-7m0 0V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm0 0h16"></path>
+  </svg>
+</button>
+
+{#if $currentVariablePrompt}
+  <div class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-primary p-4 rounded-lg shadow-lg">
+    <h3 class="text-lg font-bold mb-2">Fill in the variables:</h3>
+    {#each Object.entries($variableValues) as [key, value]}
+      <div class="mb-2">
+        <label for={key} class="block text-sm font-medium text-gray-700">{key}</label>
+        <input type="text" id={key} bind:value={$variableValues[key]} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+      </div>
+    {/each}
+    <button on:click={processVariablePrompt} class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      Use Variable Prompt
+    </button>
+  </div>
+{/if}
 
 <style>
   @import './styles/styles.css';
