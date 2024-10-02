@@ -526,7 +526,7 @@ SmoothGPT
         <!-- Variable Prompt Editor sidebar -->
         <div
           class="h-full bg-secondary transition-all duration-300 ease-in-out overflow-hidden flex"
-          style="width: {isVariablePromptEditorVisible ? 'auto' : '0px'};"
+          style="width: {isVariablePromptEditorVisible ? '300px' : '0px'};"
         >
           <VariablePromptEditor on:use-variable-prompt={handleUseVariablePrompt} />
         </div>
