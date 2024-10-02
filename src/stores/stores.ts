@@ -101,3 +101,26 @@ export const showTokens = writable(parsedShowTokens);
 showTokens.subscribe(value => {
     localStorage.setItem('show_tokens', JSON.stringify(value));
 });
+
+// Variable Prompt Templates
+interface VariablePromptTemplate {
+  id: string;
+  name: string;
+  template: string;
+  variables: string[];
+}
+
+let storedVariablePromptTemplates = localStorage.getItem('variable_prompt_templates');
+let parsedVariablePromptTemplates: VariablePromptTemplate[] = storedVariablePromptTemplates !== null ? JSON.parse(storedVariablePromptTemplates) : [];
+
+export const variablePromptTemplates = writable(parsedVariablePromptTemplates);
+
+variablePromptTemplates.subscribe(value => {
+  localStorage.setItem('variable_prompt_templates', JSON.stringify(value));
+});
+
+// Current Variable Prompt
+export const currentVariablePrompt = writable<VariablePromptTemplate | null>(null);
+
+// Variable Values
+export const variableValues = writable<Record<string, string>>({});
