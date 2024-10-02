@@ -1,6 +1,6 @@
 import type { ChatCompletionRequestMessage } from "openai";
 import { get, writable } from "svelte/store";
-import { conversations, chosenConversationId, combinedTokens, apiKey } from "../stores/stores";
+import { conversations, chosenConversationId, combinedTokens, apiKey, currentVariablePrompt, variableValues } from "../stores/stores";
 import { type Conversation, defaultAssistantRole } from "../stores/stores";
 import { selectedModel, selectedVoice, audioUrls, base64Images } from '../stores/stores';
 
@@ -99,11 +99,11 @@ export async function routeMessage(input: string, convId, pdfOutput) {
     ];
 
     // Process variable prompt if it exists
-    const currentVariablePrompt = get(currentVariablePrompt);
-    if (currentVariablePrompt) {
-        const variableValues = get(variableValues);
-        let processedPrompt = currentVariablePrompt.template;
-        Object.entries(variableValues).forEach(([key, value]) => {
+    const currentVarPrompt = get(currentVariablePrompt);
+    if (currentVarPrompt) {
+        const varValues = get(variableValues);
+        let processedPrompt = currentVarPrompt.template;
+        Object.entries(varValues).forEach(([key, value]) => {
             processedPrompt = processedPrompt.replace(new RegExp(`::${key}::`, 'g'), value);
         });
         outgoingMessage[outgoingMessage.length - 1].content = processedPrompt;
