@@ -596,7 +596,7 @@ SmoothGPT
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.15s, visibility 0.15s;
+    transition: opacity 0.05s, visibility 0.05s;
   }
 
   button[title]:hover::after {
