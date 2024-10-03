@@ -430,18 +430,16 @@ SmoothGPT
         <!-- New buttons above the chat input box, centered -->
         <div class="flex justify-center space-x-4 mb-4">
           <button
-            class="p-2 rounded-full bg-green-500 hover:bg-green-600 transition duration-200"
+            class="p-2 rounded-full bg-green-500 hover:bg-green-600 transition duration-200 tooltip-bottom"
             on:click={handleMutate}
-            aria-label="Mutate Prompt"
-            title="Mutate Prompt"
+            data-tooltip="Mutate Prompt"
           >
             <img src={MutateIcon} alt="Mutate" class="w-5 h-5" />
           </button>
           <button
-            class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition duration-200"
+            class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition duration-200 tooltip-bottom"
             on:click={handleOptimize}
-            aria-label="Optimize Prompt"
-            title="Optimize Prompt"
+            data-tooltip="Optimize Prompt"
           >
             <img src={OptimizeIcon} alt="Optimize" class="w-5 h-5" />
           </button>
@@ -608,6 +606,33 @@ SmoothGPT
   }
 
   .tooltip-left:hover::before {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .tooltip-bottom {
+    position: relative;
+  }
+
+  .tooltip-bottom::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.05s, visibility 0.05s;
+    margin-top: 10px;
+  }
+
+  .tooltip-bottom:hover::before {
     opacity: 1;
     visibility: visible;
   }
