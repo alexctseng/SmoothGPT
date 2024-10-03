@@ -582,7 +582,7 @@ SmoothGPT
   }
 
   /* Add styles for button tooltips */
-  button[title]:hover::after {
+  button[title]::after {
     content: attr(title);
     position: absolute;
     bottom: 100%;
@@ -594,5 +594,13 @@ SmoothGPT
     border-radius: 4px;
     font-size: 14px;
     white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+  }
+
+  button[title]:hover::after {
+    opacity: 1;
+    visibility: visible;
   }
 </style>
