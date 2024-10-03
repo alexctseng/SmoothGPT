@@ -32,6 +32,6 @@ export default defineConfig({
     esbuildOptions: {
       target: "es2022",
     },
-    include: ['tailwindcss/plugin']
+    include: ['tailwindcss/plugin', 'xlsx']
   }
 })

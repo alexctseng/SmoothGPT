@@ -1,6 +1,4 @@
 // src/managers/pdfManager.ts
-import * as XLSX from 'xlsx';
-
 async function initPDFJS() {
     const PDFJS = await import('pdfjs-dist');
     PDFJS.GlobalWorkerOptions.workerSrc = '/workers/pdf.worker.min.mjs';
@@ -69,20 +67,25 @@ export async function processPDF(file: File): Promise<string> {
 export async function processSpreadsheet(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result as ArrayBuffer);
-            const workbook = XLSX.read(data, {type: 'array'});
+        reader.onload = async (e) => {
+            try {
+                const XLSX = await import('xlsx');
+                const data = new Uint8Array(e.target.result as ArrayBuffer);
+                const workbook = XLSX.read(data, {type: 'array'});
 
-            let result = '';
-            workbook.SheetNames.forEach(sheetName => {
-                const worksheet = workbook.Sheets[sheetName];
-                const json = XLSX.utils.sheet_to_json(worksheet);
-                result += `Sheet: ${sheetName}\n`;
-                result += JSON.stringify(json, null, 2);
-                result += '\n\n';
-            });
+                let result = '';
+                workbook.SheetNames.forEach(sheetName => {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
+                    result += `Sheet: ${sheetName}\n`;
+                    result += JSON.stringify(json, null, 2);
+                    result += '\n\n';
+                });
 
-            resolve(`The user uploaded a spreadsheet file named "${file.name}". The contents are as follows:\n\n${result}`);
+                resolve(`The user uploaded a spreadsheet file named "${file.name}". The contents are as follows:\n\n${result}`);
+            } catch (error) {
+                reject(new Error('Failed to process the spreadsheet file.'));
+            }
         };
         reader.onerror = () => reject(new Error('Failed to read the spreadsheet file.'));
         reader.readAsArrayBuffer(file);
