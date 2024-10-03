@@ -23,7 +23,7 @@
       id: '1',
       title: 'CaseBrief+',
       description: 'Generate a comprehensive case brief',
-      text: 'Please provide a detailed case brief for the following legal case:',
+      text: 'You are an AI legal assistant specializing in creating concise case briefs. Your task is to analyze the attached case PDF and generate a simplified, shortened case brief following this structure:\n\n**Case Brief from PromptComposer+**\n[Case Name] \n([Citation])\n\nRule of Law:\n[Concisely state the main legal principle or rule established by the case]\n\nFacts:\n- [List key facts of the case in bullet points]\n- [Focus on the most relevant details]\n- [Include procedural history if significant]\n\nIssue:\n[State the primary legal question(s) addressed by the court]\n\nOpinions:\n[Majority Opinion - Author]\n[Summarize the court\'s decision and reasoning in 2-3 sentences]\n\n[If applicable, include concurring or dissenting opinions in a similar format]\n\nAnalysis:\n[Provide a brief analysis of the case\'s significance, impact, or implications in 2-3 sentences]\n\nWhen creating the brief:\n1. Use clear, concise language\n2. Focus on the most important aspects of the case\n3. Avoid legal jargon where possible, or explain it if necessary\n4. Ensure accuracy in representing the court\'s decision and reasoning\n5. Keep the entire brief to approximately 300-400 words\n\nPlease read the attached PDF carefully and create a case brief following this format. If any section is not applicable or information is not available, you may omit it or state that it\'s not provided in the source material.',
       category: 'Legal'
     },
     {
