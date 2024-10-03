@@ -533,27 +533,28 @@ SmoothGPT
       </div>
 </main>
 
-<!-- Prompt Library toggle button -->
-<button
-  class="fixed top-4 {isPromptLibraryVisible || isVariablePromptEditorVisible ? 'right-[300px]' : 'right-4'} bg-primary text-white p-2 rounded-full flex items-center justify-center z-50 shadow-lg hover:bg-hover transition-colors duration-200 tooltip-left"
-  on:click={togglePromptLibrary}
-  data-tooltip="Prompt Library"
->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-  </svg>
-</button>
+<!-- Prompt Library and Variable Prompt Editor toggle buttons -->
+<div class="fixed top-4 right-4 flex flex-col space-y-4 z-50">
+  <button
+    class="bg-primary text-white p-2 rounded-full flex items-center justify-center shadow-lg hover:bg-hover transition-colors duration-200 tooltip-left"
+    on:click={togglePromptLibrary}
+    data-tooltip="Prompt Library"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
 
-<!-- Variable Prompt Editor toggle button -->
-<button
-  class="fixed top-20 {isPromptLibraryVisible || isVariablePromptEditorVisible ? 'right-[300px]' : 'right-4'} bg-primary text-white p-2 rounded-full flex items-center justify-center z-50 shadow-lg hover:bg-hover transition-colors duration-200 tooltip-left"
-  on:click={toggleVariablePromptEditor}
-  data-tooltip="Variable Prompting"
->
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-    <path d="M4 21v-7m0 0V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm0 0h16"></path>
-  </svg>
-</button>
+  <button
+    class="bg-primary text-white p-2 rounded-full flex items-center justify-center shadow-lg hover:bg-hover transition-colors duration-200 tooltip-left"
+    on:click={toggleVariablePromptEditor}
+    data-tooltip="Variable Prompting"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+      <path d="M4 21v-7m0 0V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm0 0h16"></path>
+    </svg>
+  </button>
+</div>
 
 {#if $currentVariablePrompt}
   <div class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-primary p-4 rounded-lg shadow-lg">
