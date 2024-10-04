@@ -287,9 +287,9 @@ function startEditMessage(i: number) {
   }
 
   async function handleMutatePrompt(event) {
-    const { currentPrompt, mutationInstructions } = event.detail;
+    const { mutationInstructions } = event.detail;
     try {
-      const mutatedPrompt = await mutatePrompt(currentPrompt, mutationInstructions);
+      const mutatedPrompt = await mutatePrompt(input, mutationInstructions);
       input = mutatedPrompt;
       showMutatePopup = false;
     } catch (error) {
