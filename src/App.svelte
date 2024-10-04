@@ -8,6 +8,7 @@
   import Help from "./lib/Help.svelte";
   import PromptLibrary from "./lib/PromptLibrary.svelte";
   import VariablePromptEditor from "./lib/VariablePromptEditor.svelte";
+  import MutatePromptPopup from "./lib/MutatePromptPopup.svelte";
   import SvelteMarkdown from "svelte-markdown";
   import CodeRenderer from "./renderers/Code.svelte";
   import UserCodeRenderer from "./renderers/userCode.svelte";
@@ -279,9 +280,22 @@ function startEditMessage(i: number) {
     console.log("Optimize button clicked");
   }
 
+  let showMutatePopup = false;
+
   function handleMutate() {
-    // Implement mutation functionality here
-    console.log("Mutate button clicked");
+    showMutatePopup = true;
+  }
+
+  function handleMutatePrompt(event) {
+    const { currentPrompt, mutationInstructions } = event.detail;
+    // Here you would call your AI service to mutate the prompt
+    // For now, we'll just append the instructions to the current prompt
+    input = `${currentPrompt}\n\nMutation instructions: ${mutationInstructions}`;
+    showMutatePopup = false;
+  }
+
+  function handleCancelMutate() {
+    showMutatePopup = false;
   }
 </script>
 <title>
@@ -466,6 +480,14 @@ SmoothGPT
             <img src={OptimizeIcon} alt="Optimize" class="w-5 h-5" />
           </button>
         </div>
+
+        {#if showMutatePopup}
+          <MutatePromptPopup
+            currentPrompt={input}
+            on:mutate={handleMutatePrompt}
+            on:cancel={handleCancelMutate}
+          />
+        {/if}
 
         <!-- Chat input box -->
         <div class="inputbox-container w-full flex justify-center items-center">
