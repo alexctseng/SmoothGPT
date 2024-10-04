@@ -4,9 +4,11 @@
   export let currentPrompt: string;
 
   let mutationInstructions: string = '';
+  let isMutating: boolean = false;
   const dispatch = createEventDispatcher();
 
-  function handleMutate() {
+  async function handleMutate() {
+    isMutating = true;
     dispatch('mutate', { currentPrompt, mutationInstructions });
   }
 
@@ -27,8 +29,14 @@
       <textarea id="mutationInstructions" class="w-full p-2 border rounded-md" rows="3" bind:value={mutationInstructions}></textarea>
     </div>
     <div class="flex justify-end space-x-4">
-      <button on:click={handleCancel} class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition-colors">Cancel</button>
-      <button on:click={handleMutate} class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">Mutate</button>
+      <button on:click={handleCancel} class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition-colors" disabled={isMutating}>Cancel</button>
+      <button on:click={handleMutate} class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors" disabled={isMutating}>
+        {#if isMutating}
+          <span class="animate-spin mr-2">⟳</span>Mutating...
+        {:else}
+          Mutate
+        {/if}
+      </button>
     </div>
   </div>
 </div>

@@ -286,12 +286,16 @@ function startEditMessage(i: number) {
     showMutatePopup = true;
   }
 
-  function handleMutatePrompt(event) {
+  async function handleMutatePrompt(event) {
     const { currentPrompt, mutationInstructions } = event.detail;
-    // Here you would call your AI service to mutate the prompt
-    // For now, we'll just append the instructions to the current prompt
-    input = `${currentPrompt}\n\nMutation instructions: ${mutationInstructions}`;
-    showMutatePopup = false;
+    try {
+      const mutatedPrompt = await mutatePrompt(currentPrompt, mutationInstructions);
+      input = mutatedPrompt;
+      showMutatePopup = false;
+    } catch (error) {
+      console.error('Error mutating prompt:', error);
+      // You might want to show an error message to the user here
+    }
   }
 
   function handleCancelMutate() {
