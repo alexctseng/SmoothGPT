@@ -112,6 +112,31 @@ export function reloadConfig(): void {
   console.log("Configuration reloaded.");
 }
 
+export async function mutatePrompt(currentPrompt: string, mutationInstructions: string): Promise<string> {
+  if (!openai) {
+    throw new Error("OpenAI API is not initialized");
+  }
+
+  const messages: ChatCompletionRequestMessage[] = [
+    { role: "system", content: "You are an AI assistant that helps to improve and modify prompts based on given instructions." },
+    { role: "user", content: `Current prompt: "${currentPrompt}"\n\nMutation instructions: ${mutationInstructions}\n\nPlease provide an improved version of the prompt based on these instructions.` }
+  ];
+
+  const response = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo", // You can change this to a different model if needed
+    messages: messages,
+    max_tokens: 500,
+    n: 1,
+    temperature: 0.7,
+  });
+
+  if (response.data.choices && response.data.choices.length > 0 && response.data.choices[0].message) {
+    return response.data.choices[0].message.content.trim();
+  } else {
+    throw new Error("Failed to generate a mutated prompt");
+  }
+}
+
 export async function sendRequest(msg: ChatCompletionRequestMessage[], model: string = get(selectedModel)): Promise<any> {
 
   try {
