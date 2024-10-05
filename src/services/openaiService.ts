@@ -1,7 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { Configuration, OpenAIApi } from "openai";
-import type { ChatCompletionRequestMessage,  } from "openai";
-import type  { ChatCompletionRequestMessageRoleEnum } from "openai";
+import type { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum } from "openai";
 import { apiKey} from "../stores/stores";
 import { selectedModel, selectedVoice, audioUrls, selectedSize, selectedQuality, defaultAssistantRole, isStreaming, streamContext } from '../stores/stores';
 import { conversations, chosenConversationId, combinedTokens, userRequestedStreamClosure } from "../stores/stores";
@@ -253,9 +252,9 @@ export async function sendVisionMessage(msg: ChatCompletionRequestMessage[], ima
 
     // Convert history messages into the expected format
     let historyMessages = currentHistory.map(historyItem => ({
-      role: historyItem.role,
+      role: historyItem.role as ChatCompletionRequestMessageRoleEnum,
       content: typeof historyItem.content === 'string' ? [{type: "text", text: historyItem.content}] : historyItem.content,
-  }));
+    }));
 
   let userTextMessage = [...msg].reverse().find(m => m.role === "user")?.content || "";
 
@@ -276,8 +275,8 @@ let combinedMessageContent = userTextMessage ? [
 ] : [...imageMessages]; // Only include image messages if there's no text message
 
 // Create a single 'user' message object that contains both the text and image contents for the current message
-let currentMessage = {
-    role: "user",
+let currentMessage: ChatCompletionRequestMessage = {
+    role: "user" as ChatCompletionRequestMessageRoleEnum,
     content: combinedMessageContent,
 };
 
