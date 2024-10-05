@@ -413,7 +413,7 @@ let finalMessages = [...cleansedMessages, currentMessage];
     
     msg = [roleMsg, ...msg];
 
-    const cleansedMessages = msg.map(cleanseMessage);
+    const cleansedMessages = msg.map(cleanseMessage) as ChatCompletionRequestMessage[];
 
     let done = false;
     let streamText = "";

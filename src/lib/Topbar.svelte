@@ -22,7 +22,7 @@
     editableTitle = conversation_title;
     // Use this to focus the input after the component updates
     setTimeout(() => {
-      const inputElement = document.querySelector('input[type="text"]');
+      const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement;
       if (inputElement) {
         inputElement.focus();
       }

@@ -147,7 +147,7 @@
         <div class="flex flex-col h-40 my-2 flex-grow overflow-y-auto convo-container">
           <!-- Conversation listing starts here -->
           {#each $conversations.slice().reverse() as conv, i}
-            <div class="{$chosenConversationId === $conversations.length - i - 1 ? 'bg-hover2 hover:bg-hover2' : ''} title-container conversation flex justify-between min-h-[50px] py-1 pl-3 items-center rounded-md hover:bg-hover cursor-pointer text-sm transition-colors duration-200" tabindex="-1" on:click={() => {let id = $conversations.length - i - 1; chosenConversationId.set(id);}} on:keydown={(e) => {if (e.key === 'Enter') {e.preventDefault(); let id = $conversations.length - i - 1; chosenConversationId.set(id);}}} >
+            <div class="{$chosenConversationId === $conversations.length - i - 1 ? 'bg-hover2 hover:bg-hover2' : ''} title-container conversation flex justify-between min-h-[50px] py-1 pl-3 items-center rounded-md hover:bg-hover cursor-pointer text-sm transition-colors duration-200" tabindex="-1" on:click={() => {let id = $conversations.length - i - 1; chosenConversationId.set(id);}} on:keydown={(e) => {if (e.key === 'Enter') {e.preventDefault(); let id = $conversations.length - i - 1; chosenConversationId.set(id);}}} role="button" aria-label="Select conversation">
               {#if editingTitleId === $conversations.length - i - 1}
                 <input type="text" class="edit-input" bind:value={editedTitle} on:blur={() => saveEditedTitle($conversations.length - i - 1)} on:keydown={(e) => {if (e.key === 'Enter') {saveEditedTitle($conversations.length - i - 1); e.preventDefault();}}}/>
               {:else}

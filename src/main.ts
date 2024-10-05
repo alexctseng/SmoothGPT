@@ -1,5 +1,8 @@
 import './app.css'
-import App from './App.svelte'
+import App from './App.svelte';
+
+// If App.svelte doesn't have a default export, you can use this syntax:
+// import { App } from './App.svelte';
 import chatIcon from './assets/chat.svg';
 
 

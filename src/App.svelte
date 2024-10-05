@@ -298,6 +298,9 @@ function startEditMessage(i: number) {
     }
   }
 
+  // Import the mutatePrompt function
+  import { mutatePrompt } from './services/openaiService';
+
   function handleCancelMutate() {
     showMutatePopup = false;
   }
