@@ -91,7 +91,7 @@ export async function createChatCompletion(model: string, messages: ChatCompleti
   try {
     const response = await openaiClient.createChatCompletion({
       model: model,
-      messages: messages,
+      messages: messages as ChatCompletionRequestMessage[],
     });
     console.log("Chat completion response received.");
     return response;
