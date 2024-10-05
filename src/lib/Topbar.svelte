@@ -55,6 +55,7 @@
   class:hover:bg-hover2={isHovering}
   on:mouseenter={() => isHovering = true}
   on:mouseleave={() => isHovering = false}
+  role="banner"
 >
   <button
     on:click={() => menuVisible.set(true)}
