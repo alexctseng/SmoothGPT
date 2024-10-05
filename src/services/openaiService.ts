@@ -272,7 +272,7 @@ let combinedMessageContent = userTextMessage ? [
         text: userTextMessage,
     },
     ...imageMessages // Spread operator to include all image messages
-] : [...imageMessages]; // Only include image messages if there's no text message
+] : imageMessages; // Only include image messages if there's no text message
 
 // Create a single 'user' message object that contains both the text and image contents for the current message
 let currentMessage: ChatCompletionRequestMessage = {
