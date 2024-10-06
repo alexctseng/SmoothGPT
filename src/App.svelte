@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from 'svelte';  
   import { initApp, cleanupApp } from './appInit';
 
-  export let name = 'SmoothGPT';
+  export const name = 'SmoothGPT';
   import AudioPlayer from './lib/AudioPlayer.svelte';
   import Topbar from "./lib/Topbar.svelte";
   import Sidebar from "./lib/Sidebar.svelte";
