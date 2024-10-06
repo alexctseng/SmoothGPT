@@ -16,6 +16,12 @@
   import CloseIcon from "../assets/close.svg";
   import NewChat from "../assets/NewChat.svg";
   import EditIcon from "../assets/edit.svg";
+  import { writable } from 'svelte/store';
+
+  // Add the utility function directly in this file
+  function cn(...inputs: (string | boolean | undefined | null)[]): string {
+    return inputs.filter(Boolean).join(' ');
+  }
 
   const dispatch = createEventDispatcher();
   let placeholder = `You are a helpful assistant.`;
@@ -123,31 +129,57 @@
   }
 </script>
 
-<div class="flex flex-col text-white/90">
-  <div class="{$menuVisible == true ? 'translate-x-0' : '-translate-x-[100%] md:translate-x-0'} duration-200 h-full fixed md:flex {isCollapsed ? 'w-[60px]' : 'w-[280px]'} flex-col bg-secondary z-40 shadow-lg">
-    <nav class="flex h-full flex-1 flex-col space-y-3 p-5 bg-secondary">
+<div class="flex flex-col text-gray-100">
+  <div class="{cn(
+    'duration-200 h-full fixed md:flex flex-col bg-gray-900 z-40 shadow-lg',
+    $menuVisible ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+    isCollapsed ? 'w-16' : 'w-72'
+  )}">
+    <nav class="flex h-full flex-1 flex-col space-y-4 p-4">
       {#if !isCollapsed}
         <button on:click={() => {menuVisible.set(false);}} class="md:hidden z-20 flex py-3 px-3 items-center gap-3 rounded-md hover:bg-hover hover:opacity-hover transition-colors duration-200 cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/50">
           Close menu
         </button>
-        <button class="flex justify-between items-center py-3 px-3 cursor-pointer w-full text-left hover:bg-gray-700 rounded-lg z-20" on:click={newChat}>
-          <p class="text-center font-bold text-2xl m-0 whitespace-nowrap">Prompt Composer</p>
-          <img src={NewChat} alt="New chat" class="w-6 h-6 filter-white z-20">
+        <button 
+          class="flex justify-between items-center py-3 px-4 w-full text-left bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
+          on:click={newChat}
+        >
+          <span class="font-semibold text-lg">Prompt Composer</span>
+          <img src={NewChat} alt="New chat" class="w-5 h-5 filter-white">
         </button>
         
-        <div class="py-1 select-none z-20">
-          <p class="text-xs text-gray-400 z-20">System Role:</p>
+        <div class="space-y-2">
+          <label for="system-role" class="text-xs font-medium text-gray-400">System Role:</label>
+          {#if $conversations[$chosenConversationId]}
+            <textarea 
+              id="system-role"
+              bind:value={$conversations[$chosenConversationId].assistantRole} 
+              placeholder={placeholder}
+              class="w-full bg-gray-800 px-3 py-2 text-sm rounded-md border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200"
+            ></textarea>
+          {:else}
+            <textarea 
+              placeholder="Select a conversation or start a new one..." 
+              class="w-full bg-gray-800 px-3 py-2 text-sm rounded-md border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200"
+              disabled
+            ></textarea>
+          {/if}
         </div>
-        {#if $conversations[$chosenConversationId]}
-          <textarea bind:value={$conversations[$chosenConversationId].assistantRole} {placeholder} class="bg-primary px-2 pt-1 pb-3 resize-none rounded focus:outline-none focus:outline-primary z-20"></textarea>
-        {:else}
-          <textarea placeholder="Select a conversation or start a new one..." class="bg-primary px-2 pt-1 pb-3 resize-none rounded focus:outline-none focus:outline-primary z-20"></textarea>
-        {/if}
         
-        <div class="flex flex-col h-40 my-2 flex-grow overflow-y-auto convo-container">
-          <!-- Conversation listing starts here -->
+        <div class="flex-grow overflow-y-auto space-y-1 my-4">
           {#each $conversations.slice().reverse() as conv, i}
-            <div class="{$chosenConversationId === $conversations.length - i - 1 ? 'bg-hover2 hover:bg-hover2' : ''} title-container conversation flex justify-between min-h-[50px] py-1 pl-3 items-center rounded-md hover:bg-hover cursor-pointer text-sm transition-colors duration-200" tabindex="-1" on:click={() => {let id = $conversations.length - i - 1; chosenConversationId.set(id);}} on:keydown={(e) => {if (e.key === 'Enter') {e.preventDefault(); let id = $conversations.length - i - 1; chosenConversationId.set(id);}}} role="button" aria-label="Select conversation">
+            <div 
+              class={cn(
+                "flex justify-between items-center py-2 px-3 rounded-md cursor-pointer transition-colors duration-200",
+                $chosenConversationId === $conversations.length - i - 1
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "hover:bg-gray-800"
+              )}
+              on:click={() => {
+                let id = $conversations.length - i - 1;
+                chosenConversationId.set(id);
+              }}
+            >
               {#if editingTitleId === $conversations.length - i - 1}
                 <input type="text" class="edit-input" bind:value={editedTitle} on:blur={() => saveEditedTitle($conversations.length - i - 1)} on:keydown={(e) => {if (e.key === 'Enter') {saveEditedTitle($conversations.length - i - 1); e.preventDefault();}}}/>
               {:else}
@@ -175,18 +207,30 @@
             </div>
           {/each}
         </div>
-        <div class="flex flex-row gap-2">
-          <button on:click={exportSession} class="flex flex-1 border border-white/20 py-3 px-3 items-center text-gray-400 font-bold gap-3 rounded-md hover:bg-hover transition-colors duration-200 cursor-pointer text-sm mt-auto z-20">
+        <div class="flex space-x-2">
+          <button 
+            on:click={exportSession} 
+            class="flex-1 py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-md transition-colors duration-200"
+          >
             Export
           </button>
-          <button on:click={importSession} class="flex flex-1 border border-white/20 py-3 px-3 items-center text-gray-400 font-bold gap-3 rounded-md hover:bg-hover transition-colors duration-200 cursor-pointer text-sm mt-auto z-20">
+          <button 
+            on:click={importSession} 
+            class="flex-1 py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-md transition-colors duration-200"
+          >
             Import
           </button>
         </div>
-        <button on:click={openHelp} class="flex border border-white/50 py-3 px-3 items-center font-bold gap-3 rounded-md hover:bg-hover transition-colors duration-200 cursor-pointer text-sm mt-auto z-20">
+        <button 
+          on:click={openHelp} 
+          class="w-full py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-md transition-colors duration-200"
+        >
           Help
         </button>
-        <button on:click={openSettings} class="flex border border-white/50 py-3 px-3 items-center font-bold gap-3 rounded-md hover:bg-hover transition-colors duration-200 cursor-pointer text-sm mt-auto z-20">
+        <button 
+          on:click={openSettings} 
+          class="w-full py-2 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-md transition-colors duration-200"
+        >
           Settings {$apiKey === null ? "(Insert API key)" : ""}
         </button>
       {:else}
@@ -213,6 +257,12 @@
 </button>
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+  :global(body) {
+    font-family: 'Inter', sans-serif;
+  }
+
   .conversation .edit,
   .conversation .delete {
     display: none;
