@@ -124,7 +124,7 @@ export async function mutatePrompt(currentPrompt: string, mutationInstructions: 
   try {
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: messages,
+      messages: messages as ChatCompletionRequestMessage[],
       max_tokens: 150,
       n: 1,
       temperature: 0.7,
