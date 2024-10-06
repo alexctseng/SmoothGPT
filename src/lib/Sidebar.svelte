@@ -179,6 +179,16 @@
                 let id = $conversations.length - i - 1;
                 chosenConversationId.set(id);
               }}
+              on:keydown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  let id = $conversations.length - i - 1;
+                  chosenConversationId.set(id);
+                }
+              }}
+              tabindex="0"
+              role="button"
+              aria-label={`Select conversation: ${conv.title === "" ? "New conversation" : conv.title}`}
             >
               {#if editingTitleId === $conversations.length - i - 1}
                 <input type="text" class="edit-input" bind:value={editedTitle} on:blur={() => saveEditedTitle($conversations.length - i - 1)} on:keydown={(e) => {if (e.key === 'Enter') {saveEditedTitle($conversations.length - i - 1); e.preventDefault();}}}/>
