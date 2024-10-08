@@ -12,6 +12,8 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "@types/papaparse": "^5.3.14",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
@@ -26,6 +28,8 @@
   },
   "dependencies": {
     "anthropic": "^0.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
     "idb": "^8.0.0",
     "openai": "^3.2.1",
     "papaparse": "^5.4.1",

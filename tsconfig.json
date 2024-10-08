@@ -16,7 +16,16 @@
     "allowJs": true,
     "checkJs": true,
     "isolatedModules": true,
-    "types": ["papaparse", "xlsx"]
+    "types": ["papaparse", "xlsx"],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "target": "ES6",
+    "module": "CommonJS",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
   },
   "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
   "references": [{ "path": "./tsconfig.node.json" }]
