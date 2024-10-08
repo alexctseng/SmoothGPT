@@ -1,8 +1,18 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';  
   import { initApp, cleanupApp } from './appInit';
+  import { apiKey, settingsVisible } from './stores/stores';
 
   export const name = 'SmoothGPT';
+
+  let isApiKeySet = false;
+
+  apiKey.subscribe(value => {
+    isApiKeySet = !!value;
+    if (isApiKeySet) {
+      settingsVisible.set(false);
+    }
+  });
   import AudioPlayer from './lib/AudioPlayer.svelte';
   import Topbar from "./lib/Topbar.svelte";
   import Sidebar from "./lib/Sidebar.svelte";

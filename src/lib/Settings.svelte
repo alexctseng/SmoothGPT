@@ -171,13 +171,17 @@ async function fetchModels(apiKey: string) {
   function handleSave() {
     defaultAssistantRole.set({ role: assistantRoleField, type: assistantRoleTypeField });
     apiKey.set(localApiTextField);
+    localStorage.setItem('api_key', JSON.stringify(localApiTextField));
 
     localStorage.setItem('selectedModel', get(selectedModel));
     localStorage.setItem('selectedVoice', get(selectedVoice));
     localStorage.setItem('selectedMode', get(selectedMode));
 
     dispatch('settings-changed');
-    console.log("Settings saved. New API Key:", localApiTextField.substring(0, 10) + "...");
+    console.log("Settings saved. API Key status:", localApiTextField ? "Set" : "Not set");
+    
+    // Initialize OpenAI API with the new key
+    initOpenAIApi();
   }
 
 
