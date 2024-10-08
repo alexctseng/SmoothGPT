@@ -66,6 +66,8 @@ export async function initApp() {
   });
 
   // Additional initialization logic can go here
+
+  // Additional initialization logic can go here
 }
 
 // Function to perform any cleanup on app unload or similar scenarios
