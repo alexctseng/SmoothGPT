@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';  
   import { initApp, cleanupApp } from './appInit';
-  import { apiKey, settingsVisible } from './stores/stores';
+  import { apiKey } from './stores/stores';
 
   export const name = 'SmoothGPT';
 
