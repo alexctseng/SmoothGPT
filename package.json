@@ -12,6 +12,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "@types/papaparse": "^5.3.14",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "postcss-value-parser": "^4.2.0",
