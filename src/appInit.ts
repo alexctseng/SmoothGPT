@@ -37,17 +37,12 @@ export async function initApp() {
   if (envApiKey) {
     apiKey.set(envApiKey);
     console.log("API Key set from environment variable:", envApiKey.substring(0, 10) + "...");
+    initOpenAIApi();
   } else {
     console.warn("API Key not found in environment variables");
     settingsVisible.set(true); // Open settings modal if no API key is found
   }
 
-  // Log the current API key (from store)
-  console.log("Current API Key from store:", get(apiKey) ? get(apiKey).substring(0, 10) + "..." : "API key is not set in store");
-
-  // Initialize OpenAI service with API key from store
-  initOpenAIApi();
-  
   // Subscribe to changes in the API key
   apiKey.subscribe((value) => {
     if (value) {

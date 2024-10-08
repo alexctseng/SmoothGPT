@@ -25,18 +25,13 @@
 
   let localApiTextField: string = ''; 
 
-  apiKey.subscribe(value => {
-    localApiTextField = value || '';
-    console.log("Current API Key in Settings:", localApiTextField ? localApiTextField.substring(0, 10) + "..." : "Not set");
-  });
-
   onMount(() => {
-    const currentApiKey = get(apiKey);
-    if (!currentApiKey) {
-      console.warn("API key not set in store. Please enter it manually.");
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (envApiKey) {
+      localApiTextField = envApiKey;
+      console.log("API key loaded from environment:", envApiKey.substring(0, 10) + "...");
     } else {
-      localApiTextField = currentApiKey;
-      console.log("API key loaded from store:", currentApiKey.substring(0, 10) + "...");
+      console.warn("API key not set in environment. Please enter it manually.");
     }
   });
 
