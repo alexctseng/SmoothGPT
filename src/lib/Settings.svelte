@@ -24,24 +24,15 @@
     $: $models, updateFilteredModels();
 
   let localApiTextField: string = ''; 
-  $: localApiTextField = $apiKey || '';
 
-  let apiTextField = '';
   apiKey.subscribe(value => {
-    apiTextField = value || '';
-    localApiTextField = apiTextField;
+    localApiTextField = value || '';
     console.log("Current API Key:", localApiTextField);
   });
 
-  // Initialize the API key field
   onMount(() => {
-    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (envApiKey) {
-      localApiTextField = envApiKey;
-      apiKey.set(envApiKey);
-      console.log("API Key initialized from environment variable");
-    } else {
-      console.warn("VITE_OPENAI_API_KEY not found in environment variables");
+    if (!localApiTextField) {
+      console.warn("API key not set. Please check your .env file or enter it manually.");
     }
   });
 

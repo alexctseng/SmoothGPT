@@ -38,6 +38,12 @@ export async function initApp() {
     console.log("API Key set from environment variable");
   } else {
     console.warn("VITE_OPENAI_API_KEY not found in environment variables");
+    // If not found in env, try to get from localStorage
+    const storedApiKey = localStorage.getItem("api_key");
+    if (storedApiKey) {
+      apiKey.set(JSON.parse(storedApiKey));
+      console.log("API Key retrieved from localStorage");
+    }
   }
 
   // Initialize OpenAI service with API key from store
