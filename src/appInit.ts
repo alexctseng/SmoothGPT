@@ -42,6 +42,9 @@ export async function initApp() {
     settingsVisible.set(true); // Open settings modal if no API key is found
   }
 
+  // Remove any hardcoded API key references
+  // Ensure that the API key is only stored in localStorage and not in the code
+
   // Initialize OpenAI API if the key is set
   if (get(apiKey)) {
     initOpenAIApi();
