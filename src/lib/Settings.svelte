@@ -127,9 +127,9 @@ async function checkAPIConnection() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
   } catch (error) {
-    console.error("API connection failed:", error);
+    console.error("API connection check failed:", error);
     showMessage.set("red");
-    apiCheckMessage.set("API connection failed.");
+    apiCheckMessage.set(`API connection check failed: ${error.message}`);
   }
 }
 
