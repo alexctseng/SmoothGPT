@@ -32,6 +32,7 @@ export async function initApp() {
   }
 base64Images.set([]);
   // Initialize OpenAI service with API key from store
+  initOpenAIApi();
   apiKey.subscribe((value) => {
     if (value) {
       initOpenAIApi();
