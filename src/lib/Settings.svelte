@@ -107,17 +107,17 @@ async function checkAPIConnection() {
     if (response.ok) {
       showMessage.set("green");
       apiCheckMessage.set("API connection succeeded.");
-      // Optionally, reload settings or models here
       handleSave();
-      await fetchModels(apiTextField);
+      await fetchModels(localApiTextField);
       updateFilteredModels(); 
     } else {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
     }
   } catch (error) {
     console.error("API connection failed:", error);
     showMessage.set("red");
-    apiCheckMessage.set("API connection failed.");
+    apiCheckMessage.set(`API connection failed: ${error.message}`);
   }
 }
 
@@ -217,7 +217,7 @@ handleClose();
   {($showMessage === 'yellow' ? 'bg-yellow-600' : '')} 
   {($showMessage === 'red' ? 'bg-red-600' : '')} 
   {($showMessage === 'green' ? 'bg-green-600' : '')}"
-  style="display: {showMessage ? 'block' : 'none'};">
+  style="display: {$showMessage ? 'block' : 'none'};">
   { $apiCheckMessage }
 </p>
 
