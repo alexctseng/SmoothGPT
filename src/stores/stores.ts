@@ -18,11 +18,15 @@ export const helpVisible = writable(false)
 export const menuVisible = writable(false)
 
 let storedApiKey = localStorage.getItem("api_key")
-let parsedApiKey = storedApiKey !== null ? JSON.parse(storedApiKey) : import.meta.env.VITE_OPENAI_API_KEY || null;
+let parsedApiKey = storedApiKey !== null ? JSON.parse(storedApiKey) : null;
 
 export const apiKey:Writable<string|null> = writable(parsedApiKey)
 apiKey.subscribe((value) => {
-  localStorage.setItem("api_key", JSON.stringify(value));
+  if (value) {
+    localStorage.setItem("api_key", JSON.stringify(value));
+  } else {
+    localStorage.removeItem("api_key");
+  }
 });
 
 let storedCombinedTokens = localStorage.getItem('combined_tokens');

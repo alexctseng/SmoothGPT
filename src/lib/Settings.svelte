@@ -176,7 +176,6 @@ async function fetchModels(apiKey: string) {
   function handleSave() {
     defaultAssistantRole.set({ role: assistantRoleField, type: assistantRoleTypeField });
     apiKey.set(localApiTextField);
-    localStorage.setItem('api_key', JSON.stringify(localApiTextField));
 
     localStorage.setItem('selectedModel', get(selectedModel));
     localStorage.setItem('selectedVoice', get(selectedVoice));
