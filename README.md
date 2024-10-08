@@ -65,3 +65,11 @@ I don't necessarily plan to actively support requests, as I forked the original 
 *** 
 
 [See the original readme here.](https://github.com/patrikzudel/PatrikZeros-ChatGPT-API-UI/blob/main/README.md)
+## Setup
+
+1. Rename `.env.example` to `.env`
+2. Replace `your_api_key_here` in the `.env` file with your actual OpenAI API key
+3. Run `npm install` to install dependencies
+4. Run `npm run dev` to start the development server
+
+Never commit your actual API key to the repository.
