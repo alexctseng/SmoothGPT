@@ -47,12 +47,14 @@ export async function initApp() {
       console.error("Error parsing stored API key:", error);
       apiKey.set(storedApiKey); // Set as is if parsing fails
     }
-  } else {
+  }
+
+  if (!get(apiKey)) {
     console.warn("API Key not found in environment variables or localStorage");
     settingsVisible.set(true); // Open settings modal if no API key is found
   }
 
-  console.log("Current API Key:", get(apiKey)); // Log the current API key (be cautious with this in production)
+  console.log("Current API Key:", get(apiKey) ? "API key is set" : "API key is not set"); // Log whether the API key is set or not
 
   // Initialize OpenAI service with API key from store
   initOpenAIApi();

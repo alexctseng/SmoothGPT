@@ -67,14 +67,14 @@ const errorMessage: ChatCompletionRequestMessage[] = [
 ];
 
 export function initOpenAIApi(): void {
-  const key = get(apiKey) || import.meta.env.VITE_OPENAI_API_KEY;
+  const key = get(apiKey);
   if (!key) {
     console.warn("API key is not set. Some features may not work until an API key is provided.");
     return;
   }
   configuration = new Configuration({ apiKey: key });
   openai = new OpenAIApi(configuration);
-  console.log("OpenAI API initialized with key:", key.substring(0, 5) + '...');
+  console.log("OpenAI API initialized");
 }
 
 export function getOpenAIApi(): OpenAIApi {
