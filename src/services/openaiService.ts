@@ -420,15 +420,14 @@ export async function sendRegularMessage(msg: ChatCompletionRequestMessage[], co
   currentHistory = [...currentHistory];
   isStreaming.set(true);
 
-  let source = new SSE("https://api.openai.com/v1/chat/completions", {
+  let source = new SSE("http://localhost:3000/api/chat", {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${get(apiKey)}`,
     },
     method: "POST",
     payload: JSON.stringify({
-      model: get(selectedModel),
       messages: cleansedMessages,
+      model: get(selectedModel),
       stream: true,
     }),
   });
