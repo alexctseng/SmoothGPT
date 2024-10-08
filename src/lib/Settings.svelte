@@ -27,12 +27,14 @@
 
   apiKey.subscribe(value => {
     localApiTextField = value || '';
-    console.log("Current API Key in Settings:", localApiTextField);
+    console.log("Current API Key in Settings:", localApiTextField ? localApiTextField.substring(0, 10) + "..." : "Not set");
   });
 
   onMount(() => {
     if (!localApiTextField) {
       console.warn("API key not set. Please enter it manually.");
+    } else {
+      console.log("API key loaded from store:", localApiTextField.substring(0, 10) + "...");
     }
   });
 

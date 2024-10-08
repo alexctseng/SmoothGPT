@@ -31,23 +31,18 @@ export async function initApp() {
   }
   base64Images.set([]);
 
-  // Set the API key from environment variable or localStorage
+  // Set the API key from environment variable
   const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-  const storedApiKey = localStorage.getItem("api_key");
   
   if (envApiKey) {
     apiKey.set(envApiKey);
     console.log("API Key set from environment variable");
-  } else if (storedApiKey) {
-    try {
-      const parsedKey = JSON.parse(storedApiKey);
-      apiKey.set(parsedKey);
-      console.log("API Key retrieved from localStorage");
-    } catch (error) {
-      console.error("Error parsing stored API key:", error);
-      apiKey.set(storedApiKey); // Set as is if parsing fails
-    }
+  } else {
+    console.warn("API Key not found in environment variables");
+    settingsVisible.set(true); // Open settings modal if no API key is found
   }
+
+  console.log("Current API Key:", get(apiKey) ? get(apiKey).substring(0, 10) + "..." : "API key is not set");
 
   if (!get(apiKey)) {
     console.warn("API Key not found in environment variables or localStorage");
