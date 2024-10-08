@@ -17,15 +17,24 @@ export const settingsVisible = writable(false)
 export const helpVisible = writable(false)
 export const menuVisible = writable(false)
 
-let storedApiKey = localStorage.getItem("api_key")
-let parsedApiKey = storedApiKey !== null ? JSON.parse(storedApiKey) : null;
+export const apiKey: Writable<string|null> = writable(null);
 
-export const apiKey:Writable<string|null> = writable(parsedApiKey)
+// Load API key from localStorage on initialization
+if (typeof window !== 'undefined') {
+  const storedApiKey = localStorage.getItem("api_key");
+  if (storedApiKey) {
+    apiKey.set(JSON.parse(storedApiKey));
+  }
+}
+
+// Subscribe to changes and update localStorage
 apiKey.subscribe((value) => {
-  if (value) {
-    localStorage.setItem("api_key", JSON.stringify(value));
-  } else {
-    localStorage.removeItem("api_key");
+  if (typeof window !== 'undefined') {
+    if (value) {
+      localStorage.setItem("api_key", JSON.stringify(value));
+    } else {
+      localStorage.removeItem("api_key");
+    }
   }
 });
 

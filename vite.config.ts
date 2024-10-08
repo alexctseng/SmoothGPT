@@ -8,7 +8,7 @@ export default defineConfig({
   logLevel: 'info',  // Options are 'info', 'warn', 'error', and 'silent'
   define: {
     // Remove the API key from the build
-    'import.meta.env.VITE_OPENAI_API_KEY': JSON.stringify(''),
+    'import.meta.env.VITE_OPENAI_API_KEY': JSON.stringify(process.env.VITE_OPENAI_API_KEY || ''),
   },
   build: {
     target: "es2022",

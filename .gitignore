@@ -29,7 +29,11 @@ dist-ssr
 
 # Build output
 dist/
+dist-ssr/
+
+# Environment variables
+.env
+.env.*
 
 # Aider-specific files
 .aider*
-.env
