@@ -2,17 +2,9 @@
   import { onMount, onDestroy } from 'svelte';  
   import { initApp, cleanupApp } from './appInit';
   import { apiKey } from './stores/stores';
-
-  export const name = 'SmoothGPT';
-
-  let isApiKeySet = false;
-
-  apiKey.subscribe(value => {
-    isApiKeySet = !!value;
-    if (isApiKeySet) {
-      settingsVisible.set(false);
-    }
-  });
+  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, currentVariablePrompt, variableValues } from "./stores/stores";
+  import { selectedModel, selectedVoice, selectedMode, isStreaming } from './stores/stores';
+  import { base64Images } from './stores/stores';
   import AudioPlayer from './lib/AudioPlayer.svelte';
   import Topbar from "./lib/Topbar.svelte";
   import Sidebar from "./lib/Sidebar.svelte";
@@ -42,17 +34,35 @@
   import PDFIcon from "./assets/pdf-icon.svg"; 
   import { afterUpdate } from "svelte";
   import { processPDF, processSpreadsheet } from './managers/pdfManager';
-  import { conversations, chosenConversationId, settingsVisible, helpVisible, clearFileInputSignal, currentVariablePrompt, variableValues } from "./stores/stores";
   import { isAudioMessage, formatMessageForMarkdown } from "./utils/generalUtils";
   import { routeMessage, deleteMessageFromConversation } from "./managers/conversationManager";
   import { copyTextToClipboard } from './utils/generalUtils';
-  import { selectedModel, selectedVoice, selectedMode, isStreaming } from './stores/stores';
   import { reloadConfig } from './services/openaiService';
   import { handleImageUpload, onSendVisionMessageComplete } from './managers/imageManager';
-  import { base64Images } from './stores/stores';
   import { closeStream } from './services/openaiService';  
-  import OptimizeIcon from "./assets/optimize.svg";
-  import MutateIcon from "./assets/Mutate.svg";
+  import { mutatePrompt } from './services/openaiService';
+
+  let OptimizeIcon: any;
+  let MutateIcon: any;
+
+  onMount(async () => {
+    const optimizeModule = await import('./assets/optimize.svg?url');
+    OptimizeIcon = optimizeModule.default;
+
+    const mutateModule = await import('./assets/mutate.svg?url');
+    MutateIcon = mutateModule.default;
+  });
+
+  export const name = 'SmoothGPT';
+
+  let isApiKeySet = false;
+
+  apiKey.subscribe(value => {
+    isApiKeySet = !!value;
+    if (isApiKeySet) {
+      settingsVisible.set(false);
+    }
+  });
 
   let isCollapsed = false;
 
@@ -309,9 +319,6 @@ function startEditMessage(i: number) {
       // You might want to show an error message to the user here
     }
   }
-
-  // Import the mutatePrompt function
-  import { mutatePrompt } from './services/openaiService';
 
   function handleCancelMutate() {
     showMutatePopup = false;
