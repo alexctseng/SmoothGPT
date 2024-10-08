@@ -9,8 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
-dist/
-dist-ssr/
+dist-ssr
 *.local
 
 # Editor directories and files
@@ -24,7 +23,12 @@ dist-ssr/
 *.sln
 *.sw?
 
-.aider*
+# Environment variables
 .env
+.env.*
+
+# Build output
 dist/
-.env
+
+# Aider-specific files
+.aider*
