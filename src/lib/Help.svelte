@@ -10,7 +10,7 @@
   
   <div class="fixed z-50 inset-0 overflow-y-auto animate-fade-in bg-black bg-opacity-50">
     <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-primary text-white rounded-lg shadow-xl p-8 relative max-w-2xl w-full">
+      <div class="bg-primary text-white rounded-lg shadow-xl p-8 relative max-w-2xl w-full border border-gray-600 backdrop-blur-md bg-opacity-90">
         <button
           class="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-600"
           on:click={handleClose}
