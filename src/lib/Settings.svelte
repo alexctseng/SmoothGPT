@@ -31,10 +31,12 @@
   });
 
   onMount(() => {
-    if (!localApiTextField) {
-      console.warn("API key not set. Please enter it manually.");
+    const currentApiKey = get(apiKey);
+    if (!currentApiKey) {
+      console.warn("API key not set in store. Please enter it manually.");
     } else {
-      console.log("API key loaded from store:", localApiTextField.substring(0, 10) + "...");
+      localApiTextField = currentApiKey;
+      console.log("API key loaded from store:", currentApiKey.substring(0, 10) + "...");
     }
   });
 
@@ -171,15 +173,15 @@ async function fetchModels(apiKey: string) {
   }
 
   function handleSave() {
-  defaultAssistantRole.set({ role: assistantRoleField, type: assistantRoleTypeField });
-  apiKey.set(localApiTextField);
+    defaultAssistantRole.set({ role: assistantRoleField, type: assistantRoleTypeField });
+    apiKey.set(localApiTextField);
 
-  localStorage.setItem('selectedModel', get(selectedModel));
-  localStorage.setItem('selectedVoice', get(selectedVoice));
-  localStorage.setItem('selectedMode', get(selectedMode));
+    localStorage.setItem('selectedModel', get(selectedModel));
+    localStorage.setItem('selectedVoice', get(selectedVoice));
+    localStorage.setItem('selectedMode', get(selectedMode));
 
-  dispatch('settings-changed');
-  console.log("Settings saved.");
+    dispatch('settings-changed');
+    console.log("Settings saved. New API Key:", localApiTextField.substring(0, 10) + "...");
   }
 
 

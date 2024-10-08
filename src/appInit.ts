@@ -36,27 +36,25 @@ export async function initApp() {
   
   if (envApiKey) {
     apiKey.set(envApiKey);
-    console.log("API Key set from environment variable");
+    console.log("API Key set from environment variable:", envApiKey.substring(0, 10) + "...");
   } else {
     console.warn("API Key not found in environment variables");
     settingsVisible.set(true); // Open settings modal if no API key is found
   }
 
-  console.log("Current API Key:", get(apiKey) ? get(apiKey).substring(0, 10) + "..." : "API key is not set");
-
-  if (!get(apiKey)) {
-    console.warn("API Key not found in environment variables or localStorage");
-    settingsVisible.set(true); // Open settings modal if no API key is found
-  }
-
-  console.log("Current API Key:", get(apiKey) ? "API key is set" : "API key is not set"); // Log whether the API key is set or not
+  // Log the current API key (from store)
+  console.log("Current API Key from store:", get(apiKey) ? get(apiKey).substring(0, 10) + "..." : "API key is not set in store");
 
   // Initialize OpenAI service with API key from store
   initOpenAIApi();
+  
+  // Subscribe to changes in the API key
   apiKey.subscribe((value) => {
     if (value) {
+      console.log("API Key updated in store:", value.substring(0, 10) + "...");
       initOpenAIApi();
-      localStorage.setItem("api_key", JSON.stringify(value)); // Save to localStorage whenever it changes
+    } else {
+      console.warn("API Key cleared or set to null/undefined");
     }
   });
 
