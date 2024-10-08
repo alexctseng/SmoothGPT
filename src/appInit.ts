@@ -1,5 +1,5 @@
 // appInit.ts
-import { initOpenAIApi } from "./services/openaiService";
+import { initOpenAIApi, isConfigured } from "./services/openaiService";
 import { clearAllAudioBlobs } from './idb';
 import { apiKey, base64Images } from "./stores/stores";
 import { conversations, chosenConversationId, settingsVisible } from "./stores/stores";
@@ -33,22 +33,27 @@ export async function initApp() {
 
   // Try to get the API key from localStorage first
   const storedApiKey = localStorage.getItem('api_key');
+  const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
   
   if (storedApiKey) {
     apiKey.set(JSON.parse(storedApiKey));
     console.log("API Key loaded from localStorage");
-    initOpenAIApi();
+  } else if (envApiKey) {
+    apiKey.set(envApiKey);
+    console.log("API Key set from environment variable");
   } else {
-    // If not in localStorage, try environment variable
-    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    
-    if (envApiKey) {
-      apiKey.set(envApiKey);
-      console.log("API Key set from environment variable");
-      initOpenAIApi();
+    console.warn("API Key not found in localStorage or environment variables");
+    settingsVisible.set(true); // Open settings modal if no API key is found
+  }
+
+  // Initialize OpenAI API if the key is set
+  if (get(apiKey)) {
+    initOpenAIApi();
+    if (isConfigured()) {
+      console.log("OpenAI API initialized successfully");
     } else {
-      console.warn("API Key not found in localStorage or environment variables");
-      settingsVisible.set(true); // Open settings modal if no API key is found
+      console.warn("Failed to initialize OpenAI API");
+      settingsVisible.set(true);
     }
   }
 
@@ -60,8 +65,13 @@ export async function initApp() {
     if (value) {
       console.log("API Key updated in store:", value.substring(0, 10) + "...");
       initOpenAIApi();
+      if (!isConfigured()) {
+        console.warn("Failed to initialize OpenAI API after key update");
+        settingsVisible.set(true);
+      }
     } else {
       console.warn("API Key cleared or set to null/undefined");
+      settingsVisible.set(true);
     }
   });
 

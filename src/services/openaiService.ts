@@ -103,7 +103,7 @@ export async function createChatCompletion(model: string, messages: ChatCompleti
 
 export function isConfigured(): boolean {
   console.log("Checking if OpenAI API is configured.");
-  return configuration !== null && get(apiKey) !== null;
+  return configuration !== null && openai !== null && get(apiKey) !== null;
 }
 
 export function reloadConfig(): void {
