@@ -13,7 +13,6 @@ function setAppHeight() {
 
 // Initialization function for the app
 export async function initApp() {
-
     if (get(conversations).length > 0) {
       chosenConversationId.set(get(conversations).length - 1);
     }
@@ -30,7 +29,14 @@ export async function initApp() {
   } catch (error) {
     console.error('Failed to clear audio blobs:', error);
   }
-base64Images.set([]);
+  base64Images.set([]);
+
+  // Set the API key from environment variable
+  const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  if (envApiKey) {
+    apiKey.set(envApiKey);
+  }
+
   // Initialize OpenAI service with API key from store
   initOpenAIApi();
   apiKey.subscribe((value) => {
