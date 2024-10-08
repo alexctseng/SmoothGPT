@@ -107,8 +107,6 @@ async function checkAPIConnection() {
     apiCheckMessage.set("API key is missing.");
     return;
   }
-  
-  console.log("Checking API connection with key:", localApiTextField);
 
   try {
     const response = await fetch('https://api.openai.com/v1/models', {
@@ -126,13 +124,12 @@ async function checkAPIConnection() {
       await fetchModels(localApiTextField);
       updateFilteredModels(); 
     } else {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
   } catch (error) {
     console.error("API connection failed:", error);
     showMessage.set("red");
-    apiCheckMessage.set(`API connection failed: ${error.message}`);
+    apiCheckMessage.set("API connection failed.");
   }
 }
 
@@ -228,12 +225,9 @@ handleClose();
     >Check API</button>
   </div>
   <p
-  class="mt-2 text-white rounded-lg p-2 
-  {($showMessage === 'yellow' ? 'bg-yellow-600' : '')} 
-  {($showMessage === 'red' ? 'bg-red-600' : '')} 
-  {($showMessage === 'green' ? 'bg-green-600' : '')}"
+  class="mt-2 text-sm {$showMessage} rounded-lg p-2"
   style="display: {$showMessage ? 'block' : 'none'};">
-  { $apiCheckMessage }
+  {$apiCheckMessage}
 </p>
 
 </div>
