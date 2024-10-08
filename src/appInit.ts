@@ -38,13 +38,18 @@ export async function initApp() {
     console.log("API Key set from environment variable");
   } else {
     console.warn("VITE_OPENAI_API_KEY not found in environment variables");
-    // If not found in env, try to get from localStorage
+  }
+  
+  // If not set from env, try to get from localStorage
+  if (!get(apiKey)) {
     const storedApiKey = localStorage.getItem("api_key");
     if (storedApiKey) {
       apiKey.set(JSON.parse(storedApiKey));
       console.log("API Key retrieved from localStorage");
     }
   }
+
+  console.log("Current API Key:", get(apiKey)); // Log the current API key (be cautious with this in production)
 
   // Initialize OpenAI service with API key from store
   initOpenAIApi();

@@ -32,7 +32,14 @@
 
   onMount(() => {
     if (!localApiTextField) {
-      console.warn("API key not set. Please check your .env file or enter it manually.");
+      const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+      if (envApiKey) {
+        localApiTextField = envApiKey;
+        apiKey.set(envApiKey);
+        console.log("API Key set from environment variable in Settings");
+      } else {
+        console.warn("API key not set. Please check your .env file or enter it manually.");
+      }
     }
   });
 
