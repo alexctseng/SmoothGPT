@@ -22,9 +22,7 @@ let parsedApiKey = storedApiKey !== null ? JSON.parse(storedApiKey) : import.met
 
 export const apiKey:Writable<string|null> = writable(parsedApiKey)
 apiKey.subscribe((value) => {
-  if (value !== import.meta.env.VITE_OPENAI_API_KEY) {
-    localStorage.setItem("api_key", JSON.stringify(value));
-  }
+  localStorage.setItem("api_key", JSON.stringify(value));
 });
 
 let storedCombinedTokens = localStorage.getItem('combined_tokens');
