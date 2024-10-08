@@ -39,8 +39,14 @@ export async function initApp() {
     apiKey.set(envApiKey);
     console.log("API Key set from environment variable");
   } else if (storedApiKey) {
-    apiKey.set(JSON.parse(storedApiKey));
-    console.log("API Key retrieved from localStorage");
+    try {
+      const parsedKey = JSON.parse(storedApiKey);
+      apiKey.set(parsedKey);
+      console.log("API Key retrieved from localStorage");
+    } catch (error) {
+      console.error("Error parsing stored API key:", error);
+      apiKey.set(storedApiKey); // Set as is if parsing fails
+    }
   } else {
     console.warn("API Key not found in environment variables or localStorage");
     settingsVisible.set(true); // Open settings modal if no API key is found
