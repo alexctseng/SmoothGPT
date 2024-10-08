@@ -19,13 +19,12 @@
     "types": ["papaparse", "xlsx"],
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "target": "ES6",
-    "module": "CommonJS",
     "strict": true,
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"]
-    }
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
   "references": [{ "path": "./tsconfig.node.json" }]

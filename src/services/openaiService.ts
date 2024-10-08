@@ -5,10 +5,16 @@ import { apiKey} from "../stores/stores";
 import { selectedModel, selectedVoice, audioUrls, selectedSize, selectedQuality, defaultAssistantRole, isStreaming, streamContext } from '../stores/stores';
 import { conversations, chosenConversationId, combinedTokens, userRequestedStreamClosure } from "../stores/stores";
 import { setHistory, countTokens, estimateTokens, displayAudioMessage, cleanseMessage } from '../managers/conversationManager';
-import { SSE } from 'sse.js'; // Assuming SSE library is used
+import SSE from 'sse.js';
 import { countTicks } from '../utils/generalUtils';
 import { saveAudioBlob, getAudioBlob } from '../idb';
 import { onSendVisionMessageComplete } from '../managers/imageManager';
+
+declare module 'sse.js' {
+  interface SSE {
+    stream(): void;
+  }
+}
 
 let configuration: Configuration | null = null;
 let openai: OpenAIApi | null = null;
@@ -31,7 +37,7 @@ export const closeStream = async () => {
           let lastEntry = currentHistory.length ? currentHistory[currentHistory.length - 1] : null;  
 
           // Determine if the last entry in history is the one we're streaming  
-          if (lastEntry && lastEntry.content.endsWith("█")) {  
+          if (lastEntry && lastEntry.content && lastEntry.content.endsWith("█")) {  
               // If so, update the last entry with the cleaned text  
               currentHistory[currentHistory.length - 1] = {  
                   ...lastEntry,  
@@ -112,9 +118,7 @@ export function reloadConfig(): void {
 }
 
 export async function mutatePrompt(currentPrompt: string, mutationInstructions: string): Promise<string> {
-  if (!openai) {
-    throw new Error("OpenAI API is not initialized");
-  }
+  const openaiClient = getOpenAIApi();
 
   const messages = [
     { role: "system", content: "You are an AI assistant that helps to improve and modify prompts based on given instructions." },
@@ -122,7 +126,7 @@ export async function mutatePrompt(currentPrompt: string, mutationInstructions: 
   ];
 
   try {
-    const response = await openai.createChatCompletion({
+    const response = await openaiClient.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: messages as ChatCompletionRequestMessage[],
       max_tokens: 150,
@@ -131,7 +135,7 @@ export async function mutatePrompt(currentPrompt: string, mutationInstructions: 
     });
 
     if (response.data.choices && response.data.choices.length > 0 && response.data.choices[0].message) {
-      return response.data.choices[0].message.content.trim();
+      return response.data.choices[0].message.content?.trim() || "";
     } else {
       throw new Error("Failed to generate a mutated prompt");
     }
@@ -142,7 +146,6 @@ export async function mutatePrompt(currentPrompt: string, mutationInstructions: 
 }
 
 export async function sendRequest(msg: ChatCompletionRequestMessage[], model: string = get(selectedModel)): Promise<any> {
-
   try {
     // Prepend the system message to msg
     msg = [
@@ -153,8 +156,11 @@ export async function sendRequest(msg: ChatCompletionRequestMessage[], model: st
       ...msg,
     ];
 
+    // Get the OpenAI API instance
+    const openaiClient = getOpenAIApi();
+
     // Attempt to send the request
-    const response = await openai.createChatCompletion({
+    const response = await openaiClient.createChatCompletion({
       model: model,
       messages: msg,
     });
@@ -178,14 +184,20 @@ export async function sendRequest(msg: ChatCompletionRequestMessage[], model: st
   }
 }
 
-function parseJSONChunks(rawData) {
+function parseJSONChunks(rawData: string) {
   try {
-    // Match and parse JSON objects from the concatenated stream data
     const jsonRegex = /\{"id".*?\]\}/g;
-    return (rawData.match(jsonRegex) || []).map(JSON.parse);
+    return (rawData.match(jsonRegex) || []).map((json: string) => {
+      try {
+        return JSON.parse(json);
+      } catch (error) {
+        console.error("Error parsing JSON chunk:", error);
+        return null;
+      }
+    }).filter((chunk): chunk is NonNullable<typeof chunk> => chunk !== null);
   } catch (error) {
-    console.error("Error parsing JSON chunk:", error);
-    return null;
+    console.error("Error parsing JSON chunks:", error);
+    return [];
   }
 }
 
@@ -241,7 +253,7 @@ console.error('Blob is null or undefined');
 
 }
 
-export async function sendVisionMessage(msg: ChatCompletionRequestMessage[], imagesBase64, convId) {
+export async function sendVisionMessage(msg: ChatCompletionRequestMessage[], imagesBase64: string[], convId: number) {
   console.log("Sending vision message.");
   userRequestedStreamClosure.set(false);  
   let hasEncounteredError = false;  
@@ -258,7 +270,7 @@ export async function sendVisionMessage(msg: ChatCompletionRequestMessage[], ima
 
   let userTextMessage = [...msg].reverse().find(m => m.role === "user")?.content || "";
 
-  let imageMessages = imagesBase64.map(imageBase64 => ({
+  let imageMessages = imagesBase64.map((imageBase64: string) => ({
     type: "image_url",
     image_url: {
         url: imageBase64, // Ensure your base64 string includes the proper data URI scheme
@@ -276,8 +288,10 @@ let combinedMessageContent = userTextMessage ? [
 
 // Create a single 'user' message object that contains both the text and image contents for the current message
 let currentMessage: ChatCompletionRequestMessage = {
-    role: "user" as ChatCompletionRequestMessageRoleEnum,
-    content: combinedMessageContent,
+  role: "user" as ChatCompletionRequestMessageRoleEnum,
+  content: combinedMessageContent.map(item => 
+    typeof item === 'string' ? item : JSON.stringify(item)
+  ).join('\n')
 };
 
 // Combine the history and the current message into the final payload
@@ -299,14 +313,14 @@ let finalMessages = [...cleansedMessages, currentMessage];
     method: "POST",
     payload: JSON.stringify({
       model: get(selectedModel),
-      messages: finalMessages, // Updated to include full conversation history
+      messages: finalMessages,
       stream: true,
     }),
   });
 
   console.log("payload", JSON.stringify({
     model: get(selectedModel),
-    messages: finalMessages, // Updated to include full conversation history
+    messages: finalMessages,
     stream: true,
   })
 );
@@ -331,7 +345,7 @@ let finalMessages = [...cleansedMessages, currentMessage];
                 tickCounter = 0;
               }
               streamText += text;
-              streamContext.set({ streamText, convId }); // Update the store  
+              streamContext.set({ streamText, convId: convId }); // Update the store  
     
               // Here, we await setHistory within the async IIFE
               setHistory([...currentHistory, {
@@ -393,11 +407,11 @@ let finalMessages = [...cleansedMessages, currentMessage];
       }  
     });  
     
-    source.stream();  
-    globalSource = source;  
+    (source as any).stream();  
+    globalSource = source as unknown as EventSource;  
   }  
 
-export async function sendRegularMessage(msg: ChatCompletionRequestMessage[], convId) {
+export async function sendRegularMessage(msg: ChatCompletionRequestMessage[], convId: number) {
   userRequestedStreamClosure.set(false);
   let hasEncounteredError = false;
 
@@ -420,14 +434,15 @@ export async function sendRegularMessage(msg: ChatCompletionRequestMessage[], co
   currentHistory = [...currentHistory];
   isStreaming.set(true);
 
-  let source = new SSE("http://localhost:3000/api/chat", {
+  let source = new SSE("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${get(apiKey)}`,
     },
     method: "POST",
     payload: JSON.stringify({
-      messages: cleansedMessages,
       model: get(selectedModel),
+      messages: cleansedMessages,
       stream: true,
     }),
   });
@@ -499,11 +514,11 @@ export async function sendRegularMessage(msg: ChatCompletionRequestMessage[], co
     isStreaming.set(false);
   });
 
-  source.stream();
-  globalSource = source;
+  (source as any).stream();
+  globalSource = source as unknown as EventSource;
 }
 
-  export async function sendPDFMessage(msg: ChatCompletionRequestMessage[], convId, pdfOutput) {
+  export async function sendPDFMessage(msg: ChatCompletionRequestMessage[], convId: number, pdfOutput: string) {
     userRequestedStreamClosure.set(false);  
     let hasEncounteredError = false;  
 
@@ -574,7 +589,7 @@ console.log(msg);
                   tickCounter = 0;
                 }
                 streamText += text;
-                streamContext.set({ streamText, convId }); // Update the store  
+                streamContext.set({ streamText, convId: convId }); // Update the store  
       
                 // Here, we await setHistory within the async IIFE
                 setHistory([...currentHistory, {
@@ -630,13 +645,13 @@ console.log(msg);
       }  
     });  
     
-    source.stream();  
-    globalSource = source;  
+    (source as any).stream();  
+    globalSource = source as unknown as EventSource;  
   }  
   
 
 
-  export async function sendDalleMessage(msg: ChatCompletionRequestMessage[], convId) {
+  export async function sendDalleMessage(msg: ChatCompletionRequestMessage[], convId: number) {
     isStreaming.set(true);
     let hasEncounteredError = false;
     let currentHistory = get(conversations)[convId].history;
@@ -692,7 +707,7 @@ console.log(msg);
   
   
 
-async function callAPI(messages) {
+async function callAPI(messages: ChatCompletionRequestMessage[]) {
   const response = await fetch('http://localhost:3000/api/chat', {
     method: 'POST',
     headers: {

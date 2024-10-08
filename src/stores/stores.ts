@@ -101,7 +101,7 @@ selectedModel.subscribe(value => {
   export const isStreaming = writable(false);  
   export const userRequestedStreamClosure = writable(false);  
 
-  export const streamContext = writable({ streamText: '', convId: null });  
+  export const streamContext = writable<{ streamText: string; convId: number | null }>({ streamText: '', convId: null });  
 
   let storedShowTokens = localStorage.getItem('show_tokens');
 let parsedShowTokens = storedShowTokens !== null ? JSON.parse(storedShowTokens) : false;
