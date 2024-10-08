@@ -35,6 +35,9 @@ export async function initApp() {
   const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
   if (envApiKey) {
     apiKey.set(envApiKey);
+    console.log("API Key set from environment variable");
+  } else {
+    console.warn("VITE_OPENAI_API_KEY not found in environment variables");
   }
 
   // Initialize OpenAI service with API key from store
