@@ -43,6 +43,9 @@ export async function initApp() {
     settingsVisible.set(true); // Open settings modal if no API key is found
   }
 
+  // Log the current API key for debugging
+  console.log("Current API Key:", get(apiKey));
+
   // Subscribe to changes in the API key
   apiKey.subscribe((value) => {
     if (value) {

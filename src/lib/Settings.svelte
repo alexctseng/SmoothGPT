@@ -33,6 +33,7 @@
     } else {
       console.warn("API key not set in environment. Please enter it manually.");
     }
+    console.log("Current localApiTextField:", localApiTextField.substring(0, 10) + "...");
   });
 
   let assistantRoleField = $defaultAssistantRole.role;
