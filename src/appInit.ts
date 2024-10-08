@@ -3,7 +3,7 @@ import { initOpenAIApi } from "./services/openaiService";
 import { clearAllAudioBlobs } from './idb';
 import { apiKey, base64Images } from "./stores/stores";
 import { conversations, chosenConversationId, settingsVisible } from "./stores/stores";
-import { get, writable } from "svelte/store";
+import { get } from "svelte/store";
 
 // Function to set the app height for mobile viewport issues
 function setAppHeight() {
