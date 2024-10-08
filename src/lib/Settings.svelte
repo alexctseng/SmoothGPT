@@ -119,9 +119,14 @@ async function checkAPIConnection() {
       await fetchModels(localApiTextField.trim());
       updateFilteredModels(); 
     } else {
-      const responseText = await response.text();
-      console.error("API response:", responseText);
-      throw new Error(`HTTP error! status: ${response.status}, message: ${responseText}`);
+      const responseData = await response.json();
+      console.error("API response:", responseData);
+      if (response.status === 401) {
+        showMessage.set("red");
+        apiCheckMessage.set("Invalid API key. Please check your API key and try again.");
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}, message: ${responseData.error?.message || 'Unknown error'}`);
+      }
     }
   } catch (error) {
     console.error("API connection check failed:", error);
