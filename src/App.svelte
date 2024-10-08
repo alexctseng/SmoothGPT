@@ -51,7 +51,7 @@
   import { handleImageUpload, onSendVisionMessageComplete } from './managers/imageManager';
   import { base64Images } from './stores/stores';
   import { closeStream } from './services/openaiService';  
-  import OptimizeIcon from "./assets/Optimize.svg";
+  import OptimizeIcon from "../assets/Optimize.svg";
   import MutateIcon from "./assets/Mutate.svg";
 
   let isCollapsed = false;
