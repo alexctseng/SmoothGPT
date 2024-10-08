@@ -99,23 +99,29 @@ async function checkAPIConnection() {
     return;
   }
 
+  console.log("Checking API connection with key:", localApiTextField.substring(0, 5) + "...");
+
   try {
     const response = await fetch('https://api.openai.com/v1/models', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${localApiTextField}`,
+        'Authorization': `Bearer ${localApiTextField.trim()}`,
         'Content-Type': 'application/json'
       },
     });
+
+    console.log("API response status:", response.status);
 
     if (response.ok) {
       showMessage.set("green");
       apiCheckMessage.set("API connection succeeded.");
       handleSave();
-      await fetchModels(localApiTextField);
+      await fetchModels(localApiTextField.trim());
       updateFilteredModels(); 
     } else {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const responseText = await response.text();
+      console.error("API response:", responseText);
+      throw new Error(`HTTP error! status: ${response.status}, message: ${responseText}`);
     }
   } catch (error) {
     console.error("API connection check failed:", error);
