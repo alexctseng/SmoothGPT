@@ -368,100 +368,99 @@ SmoothGPT
           
           <div class="space-y-6">
         {#each $conversations[$chosenConversationId].history as message, i}
-
-        {#if message.role !=='system'}
-
-          <div class="message relative inline-block w-full p-6 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'} rounded-lg shadow-md">
-            <div class="profile-picture flex items-center mb-3">
-              <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-10 h-10 ml-2" />
-              <div class="ml-4 font-bold text-xl">
-                {message.role === 'assistant' ? 'ChatGPT' : 'You'}
+          {#if message.role !== 'system'}
+            <div class="message relative inline-block w-full p-6 flex flex-col {message.role === 'user' ? 'bg-user-message' : 'bg-assistant-message'} rounded-lg shadow-md">
+              <div class="profile-picture flex items-center mb-3">
+                <img src={message.role === 'user' ? UserIcon : RobotIcon} alt="Profile" class="w-10 h-10 ml-2" />
+                <div class="ml-4 font-bold text-xl">
+                  {message.role === 'assistant' ? 'ChatGPT' : 'You'}
+                </div>
               </div>
-            </div>
 
-            {#if editingMessageId === i}
-            <textarea bind:this={editTextArea}
-            class="message-edit-textarea mt-2 bg-gray-700 p-3 mx-10 resize-none focus:outline-none rounded-lg"
-            bind:value={editingMessageContent}
-            on:input={autoExpand}
-            style="height: 96px; overflow-y: auto;" 
-            ></textarea>
-            <div class="flex place-content-center mt-4">
-              <button class="submit-edit rounded-lg p-2 mr-2 
-              { $isStreaming ? 'bg-gray-500 cursor-not-allowed hover:bg-gray-500' : 'hover:bg-green-500 bg-green-700'}"
-                   on:click={() => submitEdit(i)} 
-                      disabled={$isStreaming}>Submit</button>
-              <button class="cancel-edit bg-gray-700 hover:bg-gray-500 rounded-lg p-2 mr-2" 
-                      on:click={() => cancelEdit()}>Cancel</button>
-            </div>
-            
-            {:else}
-
-
-            <div class="message-display pl-16 pr-5 md:px-16 text-[1.1rem] leading-relaxed">
-              {#if isImageUrl(message.content)}
-          <img src={message.content} alt="Generated" class="max-w-full h-auto my-3"/>
-          <div class="text-sm text-gray-500">
-            This image will be available for 60 minutes. Right click + save as!
-          </div>
-        {:else if isAudioMessage(message)}
-          <div class="pb-3">
-            <AudioPlayer audioUrl={message.audioUrl} />
-          </div>
-        {:else}
-
-        {#if message.role === 'assistant'}
-                <SvelteMarkdown renderers={{
-                  code: CodeRenderer,
-                  em: EmRenderer,
-                  list: ListRenderer,
-                  listitem: ListItemRenderer,
-                  paragraph: ParagraphRenderer,
-                  html: HtmlRenderer,
-                }} source={formatMessageForMarkdown(message.content.toString())} />
-{:else}
-
-                <SvelteMarkdown renderers={{  
-                  code: UserCodeRenderer,
-                  codespan: CodeSpanRenderer,
-                  em: EmRenderer,  
-                  list: ListRenderer,  
-                  listitem: ListItemRenderer,  
-                  paragraph: ParagraphRenderer,  
-                  html: HtmlRenderer,  
-                }} source={formatMessageForMarkdown(message.content.toString())} />  
-
-
-{/if}
-
-              {/if}
-            </div>
-            <div class="toolbelt flex space-x-2 pl-20 mb-2 tools">
-              {#if message.role === 'assistant'}
-                {#if !isAudioMessage(message) && !isImageUrl(message.content)}
-                  <button class="copyButton w-5" on:click={() => copyTextToClipboard(message.content)}>
-                    <img class="copy-icon" alt="Copy" src={CopyIcon} />
+              {#if editingMessageId === i}
+                <textarea 
+                  bind:this={editTextArea}
+                  class="message-edit-textarea mt-2 bg-gray-700 p-3 mx-10 resize-none focus:outline-none rounded-lg"
+                  bind:value={editingMessageContent}
+                  on:input={autoExpand}
+                  style="height: 96px; overflow-y: auto;" 
+                ></textarea>
+                <div class="flex place-content-center mt-4">
+                  <button 
+                    class="submit-edit rounded-lg p-2 mr-2 {$isStreaming ? 'bg-gray-500 cursor-not-allowed hover:bg-gray-500' : 'hover:bg-green-500 bg-green-700'}"
+                    on:click={() => submitEdit(i)} 
+                    disabled={$isStreaming}
+                  >
+                    Submit
                   </button>
-                {/if}
-                <button class="deleteButton w-5" on:click={() => deleteMessageFromConversation(i)}>
-                  <img class="delete-icon" alt="Delete" src={DeleteIcon} />
-                </button>
+                  <button 
+                    class="cancel-edit bg-gray-700 hover:bg-gray-500 rounded-lg p-2 mr-2" 
+                    on:click={() => cancelEdit()}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              {:else}
+                <div class="message-display pl-16 pr-5 md:px-16 text-[1.1rem] leading-relaxed">
+                  {#if isImageUrl(message.content)}
+                    <img src={message.content} alt="Generated" class="max-w-full h-auto my-3"/>
+                    <div class="text-sm text-gray-500">
+                      This image will be available for 60 minutes. Right click + save as!
+                    </div>
+                  {:else if isAudioMessage(message)}
+                    <div class="pb-3">
+                      <AudioPlayer audioUrl={message.audioUrl} />
+                    </div>
+                  {:else}
+                    {#if message.role === 'assistant'}
+                      <SvelteMarkdown 
+                        renderers={{
+                          code: CodeRenderer,
+                          em: EmRenderer,
+                          list: ListRenderer,
+                          listitem: ListItemRenderer,
+                          paragraph: ParagraphRenderer,
+                          html: HtmlRenderer,
+                        }} 
+                        source={formatMessageForMarkdown(message.content.toString())} 
+                      />
+                    {:else}
+                      <SvelteMarkdown 
+                        renderers={{  
+                          code: UserCodeRenderer,
+                          codespan: CodeSpanRenderer,
+                          em: EmRenderer,  
+                          list: ListRenderer,  
+                          listitem: ListItemRenderer,  
+                          paragraph: ParagraphRenderer,  
+                          html: HtmlRenderer,  
+                        }} 
+                        source={formatMessageForMarkdown(message.content.toString())} 
+                      />  
+                    {/if}
+                  {/if}
+                </div>
+                <div class="toolbelt flex space-x-2 pl-20 mb-2 tools">
+                  {#if message.role === 'assistant'}
+                    {#if !isAudioMessage(message) && !isImageUrl(message.content)}
+                      <button class="copyButton w-5" on:click={() => copyTextToClipboard(message.content)}>
+                        <img class="copy-icon" alt="Copy" src={CopyIcon} />
+                      </button>
+                    {/if}
+                    <button class="deleteButton w-5" on:click={() => deleteMessageFromConversation(i)}>
+                      <img class="delete-icon" alt="Delete" src={DeleteIcon} />
+                    </button>
+                  {/if}
+                  {#if message.role === 'user'}
+                    <button class="editButton w-5" on:click={() => startEditMessage(i)}>
+                      <img class="edit-icon" alt="edit" src={EditIcon} />
+                    </button>
+                  {/if}
+                </div>
               {/if}
-            {#if message.role === 'user'}
-              <button class="editButton w-5" on:click={() => startEditMessage(i)}>
-                <img class="edit-icon" alt="edit" src={EditIcon} />
-              </button>
-            {/if}
             </div>
-
-            {/if}
-
-
-
-          </div>
-{/if}        
-        
-          {/each}
+          {/if}
+        {/each}
           </div>
         </div>
         {:else}
